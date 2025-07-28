@@ -18,6 +18,7 @@ globs:
 - Don't comment on what the code does - make the code self-documenting
 - Use comments to explain why something is done a certain way
 - Document APIs, complex algorithms, and non-obvious side effects
+- Always write comments in English for consistency and accessibility
 
 ## Single Responsibility
 - Each function should do exactly one thing

@@ -6,7 +6,7 @@ export default defineConfig({
   manifest: {
     name: 'LangInsight',
     description: 'Understand words and sentences instantly - select any text to see its meaning',
-    version: '0.0.2',
+    version: '0.0.3',
     permissions: [
       'activeTab'
     ],
