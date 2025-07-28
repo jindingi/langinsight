@@ -1,6 +1,6 @@
 {
-  "name": "wxt-react-starter",
-  "description": "manifest.json description",
+  "name": "langinsight",
+  "description": "A Chrome extension that helps you understand words and sentences by showing their meanings when you select text on any webpage",
   "private": true,
   "version": "0.0.0",
   "type": "module",
