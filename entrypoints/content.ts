@@ -8,6 +8,8 @@ export default defineContentScript({
     let selectionTimeout: NodeJS.Timeout;
     let currentPopup: HTMLDivElement | null = null;
     let currentSelection: { text: string; rect: DOMRect } | null = null;
+    let popupOpenTime = 0;
+    let ignoreNextSelectionChange = false;
 
     // Function to create shadow DOM popup
     const createShadowPopup = (selectedText: string, rect: DOMRect) => {
@@ -159,7 +161,10 @@ export default defineContentScript({
       // Add close button handler
       const closeButton = shadowRoot.getElementById('close-popup');
       if (closeButton) {
-        closeButton.addEventListener('click', removeShadowPopup);
+        closeButton.addEventListener('click', () => {
+          console.log('🔴 Close button clicked');
+          removeShadowPopup('close-button');
+        });
       }
 
       // Prevent clicks inside popup from closing it
@@ -170,16 +175,22 @@ export default defineContentScript({
       // Add to DOM
       document.body.appendChild(container);
       currentPopup = container;
+      popupOpenTime = Date.now();
 
-      console.log('Shadow popup created for text:', selectedText);
+      console.log('🎯 Shadow popup created for text:', selectedText);
+      console.log('🎯 Popup open time:', popupOpenTime);
+      console.log('🎯 Popup element:', container);
     };
 
     // Function to remove shadow popup
-    const removeShadowPopup = () => {
+    const removeShadowPopup = (reason = 'unknown') => {
       if (currentPopup) {
+        console.log('❌ Removing shadow popup. Reason:', reason);
+        console.log('❌ Popup was open for:', Date.now() - popupOpenTime, 'ms');
         currentPopup.remove();
         currentPopup = null;
-        console.log('Shadow popup removed');
+        popupOpenTime = 0;
+        ignoreNextSelectionChange = false; // Reset ignore flag
       }
     };
 
@@ -189,6 +200,12 @@ export default defineContentScript({
       clearTimeout(selectionTimeout);
 
       selectionTimeout = setTimeout(() => {
+        // Skip processing if we should ignore this change
+        if (ignoreNextSelectionChange) {
+          console.log('🔄 Ignoring selection change (icon click protection)');
+          ignoreNextSelectionChange = false;
+          return;
+        }
         const selection = window.getSelection();
 
         if (selection && selection.toString().trim().length > 0) {
@@ -210,10 +227,15 @@ export default defineContentScript({
           // Show the floating icon near the selection
           showFloatingIcon(rect, selectedText);
         } else {
-          // Hide the icon and popup if no text is selected
-          hideFloatingIcon();
-          removeShadowPopup();
-          currentSelection = null;
+          // Only clear if popup is not currently open
+          if (!currentPopup) {
+            console.log('🔄 No text selected, clearing everything');
+            hideFloatingIcon();
+            removeShadowPopup('no-selection');
+            currentSelection = null;
+          } else {
+            console.log('🔄 No text selected, but popup is open - keeping popup');
+          }
         }
       }, 100); // 100ms debounce
     };
@@ -261,7 +283,12 @@ export default defineContentScript({
       icon.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log('Icon clicked for text:', selectedText);
+        console.log('💡 Icon clicked for text:', selectedText);
+        console.log('💡 Event:', e);
+        console.log('💡 Current selection:', currentSelection);
+
+        // Prevent the next selection change from being processed
+        ignoreNextSelectionChange = true;
 
         if (currentSelection) {
           createShadowPopup(currentSelection.text, currentSelection.rect);
@@ -287,16 +314,35 @@ export default defineContentScript({
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
 
+      console.log('📱 Document click detected');
+      console.log('📱 Target element:', target);
+      console.log('📱 Target id:', target.id);
+      console.log('📱 Target closest to popup:', target.closest('#text-insight-popup'));
+      console.log('📱 Target closest to icon:', target.closest('#text-insight-icon'));
+      console.log('📱 Current popup exists:', !!currentPopup);
+
+      if (currentPopup) {
+        console.log('📱 Time since popup opened:', Date.now() - popupOpenTime, 'ms');
+      }
+
       // Don't close if clicking the icon or inside popup
       if (target.id === 'text-insight-icon' ||
         target.closest('#text-insight-popup') ||
         target.closest('#text-insight-icon')) {
+        console.log('📱 ✅ Click ignored - inside icon or popup');
+        return;
+      }
+
+      // Don't close immediately after opening (prevent same-click closing)
+      if (currentPopup && Date.now() - popupOpenTime < 200) {
+        console.log('📱 ✅ Click ignored - too soon after opening');
         return;
       }
 
       // Close everything
+      console.log('📱 ❌ Closing popup due to outside click');
       hideFloatingIcon();
-      removeShadowPopup();
+      removeShadowPopup('outside-click');
       currentSelection = null;
     });
 
