@@ -41,9 +41,6 @@ export class ContentController {
     }
 
     private handleIconClick(selection: TextSelection) {
-        // Prevent the next selection change from being processed
-        this.textSelectionManager.setIgnoreNextSelectionChange(true);
-
         this.popupManager.createShadowPopup(
             selection.text,
             selection.rect,

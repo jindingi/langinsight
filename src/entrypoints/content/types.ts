@@ -1,5 +1,6 @@
 export interface TextSelection {
     text: string;
+    context: string;
     rect: DOMRect;
 }
 
