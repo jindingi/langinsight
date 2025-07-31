@@ -4,7 +4,8 @@ import type { TextSelection } from './types';
 export class FloatingIconManager {
     private currentIcon: HTMLDivElement | null = null;
 
-    showFloatingIcon(rect: DOMRect, selectedText: string, onIconClick: (selection: TextSelection) => void) {
+    showFloatingIcon(selection: TextSelection, onIconClick: (selection: TextSelection) => void) {
+        const { rect, text: selectedText } = selection;
         // Remove existing icon if present
         this.hideFloatingIcon();
 
@@ -35,7 +36,6 @@ export class FloatingIconManager {
             console.log('💡 Icon clicked for text:', selectedText);
             console.log('💡 Event:', e);
 
-            const selection: TextSelection = { text: selectedText, rect };
             onIconClick(selection);
         });
 

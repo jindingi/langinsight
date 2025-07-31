@@ -30,8 +30,7 @@ export class ContentController {
         if (selection) {
             // Show the floating icon near the selection
             this.floatingIconManager.showFloatingIcon(
-                selection.rect,
-                selection.text,
+                selection,
                 (clickedSelection) => this.handleIconClick(clickedSelection)
             );
         } else {
