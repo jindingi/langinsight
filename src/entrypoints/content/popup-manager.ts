@@ -2,43 +2,45 @@ import { POPUP_STYLES } from './styles';
 import type { TextSelection, PopupCloseReason } from './types';
 
 export class PopupManager {
-    private currentPopup: HTMLDivElement | null = null;
-    private popupOpenTime = 0;
+  private currentPopup: HTMLDivElement | null = null;
+  private popupOpenTime = 0;
 
-    createShadowPopup(selectedText: string, rect: DOMRect, onClose: (reason: PopupCloseReason) => void) {
-        // Remove existing popup
-        this.removeShadowPopup();
+  createShadowPopup(selection: TextSelection, onClose: (reason: PopupCloseReason) => void) {
+    const { text: selectedText, rect } = selection;
 
-        // Create container
-        const container = document.createElement('div');
-        container.id = 'text-insight-popup';
-        container.style.cssText = `
+    // Remove existing popup
+    this.removeShadowPopup();
+
+    // Create container
+    const container = document.createElement('div');
+    container.id = 'text-insight-popup';
+    container.style.cssText = `
       position: fixed;
       z-index: 10001;
       pointer-events: auto;
     `;
 
-        // Create shadow root
-        const shadowRoot = container.attachShadow({ mode: 'open' });
+    // Create shadow root
+    const shadowRoot = container.attachShadow({ mode: 'open' });
 
-        // Add styles to shadow DOM
-        const styleElement = document.createElement('style');
-        styleElement.textContent = POPUP_STYLES;
-        shadowRoot.appendChild(styleElement);
+    // Add styles to shadow DOM
+    const styleElement = document.createElement('style');
+    styleElement.textContent = POPUP_STYLES;
+    shadowRoot.appendChild(styleElement);
 
-        // Calculate position
-        const popupX = Math.min(rect.right + 10, window.innerWidth - 420);
-        const popupY = Math.max(10, rect.top);
+    // Calculate position
+    const popupX = Math.min(rect.right + 10, window.innerWidth - 420);
+    const popupY = Math.max(10, rect.top);
 
-        // Create popup content
-        const popupContent = document.createElement('div');
-        popupContent.className = 'popup-container';
-        popupContent.style.cssText = `
+    // Create popup content
+    const popupContent = document.createElement('div');
+    popupContent.className = 'popup-container';
+    popupContent.style.cssText = `
       left: ${popupX}px;
       top: ${popupY}px;
     `;
 
-        popupContent.innerHTML = `
+    popupContent.innerHTML = `
       <div class="popup-header">
         <h3 class="popup-title">"${selectedText}"</h3>
         <button class="close-button" id="close-popup">×</button>
@@ -63,51 +65,51 @@ export class PopupManager {
       </div>
     `;
 
-        shadowRoot.appendChild(popupContent);
+    shadowRoot.appendChild(popupContent);
 
-        // Add close button handler
-        const closeButton = shadowRoot.getElementById('close-popup');
-        if (closeButton) {
-            closeButton.addEventListener('click', () => {
-                console.log('🔴 Close button clicked');
-                onClose('close-button');
-            });
-        }
-
-        // Prevent clicks inside popup from closing it
-        popupContent.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-
-        // Add to DOM
-        document.body.appendChild(container);
-        this.currentPopup = container;
-        this.popupOpenTime = Date.now();
-
-        console.log('🎯 Shadow popup created for text:', selectedText);
-        console.log('🎯 Popup open time:', this.popupOpenTime);
-        console.log('🎯 Popup element:', container);
+    // Add close button handler
+    const closeButton = shadowRoot.getElementById('close-popup');
+    if (closeButton) {
+      closeButton.addEventListener('click', () => {
+        console.log('🔴 Close button clicked');
+        onClose('close-button');
+      });
     }
 
-    removeShadowPopup(reason: PopupCloseReason = 'unknown') {
-        if (this.currentPopup) {
-            console.log('❌ Removing shadow popup. Reason:', reason);
-            console.log('❌ Popup was open for:', Date.now() - this.popupOpenTime, 'ms');
-            this.currentPopup.remove();
-            this.currentPopup = null;
-            this.popupOpenTime = 0;
-        }
-    }
+    // Prevent clicks inside popup from closing it
+    popupContent.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
 
-    getCurrentPopup(): HTMLDivElement | null {
-        return this.currentPopup;
-    }
+    // Add to DOM
+    document.body.appendChild(container);
+    this.currentPopup = container;
+    this.popupOpenTime = Date.now();
 
-    getPopupOpenTime(): number {
-        return this.popupOpenTime;
-    }
+    console.log('🎯 Shadow popup created for text:', selectedText);
+    console.log('🎯 Popup open time:', this.popupOpenTime);
+    console.log('🎯 Popup element:', container);
+  }
 
-    isPopupOpen(): boolean {
-        return this.currentPopup !== null;
+  removeShadowPopup(reason: PopupCloseReason = 'unknown') {
+    if (this.currentPopup) {
+      console.log('❌ Removing shadow popup. Reason:', reason);
+      console.log('❌ Popup was open for:', Date.now() - this.popupOpenTime, 'ms');
+      this.currentPopup.remove();
+      this.currentPopup = null;
+      this.popupOpenTime = 0;
     }
+  }
+
+  getCurrentPopup(): HTMLDivElement | null {
+    return this.currentPopup;
+  }
+
+  getPopupOpenTime(): number {
+    return this.popupOpenTime;
+  }
+
+  isPopupOpen(): boolean {
+    return this.currentPopup !== null;
+  }
 } 

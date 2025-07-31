@@ -42,8 +42,7 @@ export class ContentController {
 
     private handleIconClick(selection: TextSelection) {
         this.popupManager.createShadowPopup(
-            selection.text,
-            selection.rect,
+            selection,
             (reason: PopupCloseReason) => this.handlePopupClose(reason)
         );
     }
