@@ -19,7 +19,7 @@ export default defineConfig({
     ],
     content_scripts: [
       {
-        matches: ['*://jotai.org/*'],
+        matches: ['*://paulgraham.com/*'],
         js: ['content-scripts/content.js'],
         run_at: 'document_end'
       }

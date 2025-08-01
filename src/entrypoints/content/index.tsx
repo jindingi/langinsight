@@ -4,7 +4,8 @@ import ReactDOM from 'react-dom/client';
 import '@/assets/globals.css';
 
 export default defineContentScript({
-    matches: ['*://jotai.org/*'],
+    matches: ['*://paulgraham.com/*'],
+    cssInjectionMode: 'ui',
     async main(ctx) {
         const ui = await createShadowRootUi(ctx, {
             name: `langinsight-selection`,
@@ -15,8 +16,8 @@ export default defineContentScript({
                 // controller.setupEventListeners();
 
                 const wrapper = document.createElement('div')
-                wrapper.className =
-                    'text-base antialiased font-sans z-[2147483647]'
+                // wrapper.className =
+                // 'text-base antialiased font-sans z-[2147483647]'
                 container.appendChild(wrapper)
                 // Create a root on the UI container and render a component
                 const root = ReactDOM.createRoot(wrapper)
