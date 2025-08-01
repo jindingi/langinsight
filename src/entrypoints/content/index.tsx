@@ -2,7 +2,6 @@
 import { App } from '@/entrypoints/content/App';
 import ReactDOM from 'react-dom/client';
 import '@/assets/globals.css';
-import { addStylesToShadow } from '@/lib/shadow-styles';
 
 export default defineContentScript({
     matches: ['*://jotai.org/*'],
@@ -14,9 +13,6 @@ export default defineContentScript({
             onMount: (container, shadow, shadowHost) => {
                 // const controller = new ContentController(shadow);
                 // controller.setupEventListeners();
-
-                // 注入样式到 Shadow DOM
-                // addStylesToShadow(shadow);
 
                 const wrapper = document.createElement('div')
                 wrapper.className =
