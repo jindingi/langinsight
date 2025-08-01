@@ -1,4 +1,5 @@
 import React from 'react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 interface MeaningPopupProps {
     selectedText: string;
@@ -33,28 +34,36 @@ export function MeaningPopup({ selectedText, position, onClose }: MeaningPopupPr
                 </button>
             </div>
 
-            {/* Content */}
-            <div className="space-y-3">
-                <div>
-                    <h4 className="text-sm font-medium text-gray-700 mb-1">Meaning:</h4>
-                    <p className="text-gray-600 text-sm">
-                        This is a placeholder meaning for the selected text. In the future, this will be fetched from an API that provides definitions, translations, or explanations.
-                    </p>
-                </div>
+            {/* Content with Accordion */}
+            <Accordion type="multiple" defaultValue={["meaning", "example"]} className="w-full">
+                <AccordionItem value="meaning">
+                    <AccordionTrigger className="text-sm font-medium text-gray-700">
+                        Meaning
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <p className="text-gray-600 text-sm">
+                            This is a placeholder meaning for the selected text. In the future, this will be fetched from an API that provides definitions, translations, or explanations.
+                        </p>
+                    </AccordionContent>
+                </AccordionItem>
 
-                <div>
-                    <h4 className="text-sm font-medium text-gray-700 mb-1">Example:</h4>
-                    <p className="text-gray-600 text-sm italic">
-                        "This word/phrase is commonly used in academic writing."
-                    </p>
-                </div>
+                <AccordionItem value="example">
+                    <AccordionTrigger className="text-sm font-medium text-gray-700">
+                        Example
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <p className="text-gray-600 text-sm italic">
+                            "This word/phrase is commonly used in academic writing."
+                        </p>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
 
-                {/* Footer */}
-                <div className="border-t pt-2 mt-3">
-                    <p className="text-xs text-gray-500">
-                        Powered by LangInsight Extension
-                    </p>
-                </div>
+            {/* Footer */}
+            <div className="border-t pt-2 mt-3">
+                <p className="text-xs text-gray-500">
+                    Powered by LangInsight Extension
+                </p>
             </div>
         </div>
     );

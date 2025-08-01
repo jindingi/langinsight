@@ -2,9 +2,9 @@
 export default {
     darkMode: ["class"],
     content: [
-        "./entrypoints/**/*.{js,ts,jsx,tsx}",
-        "./components/**/*.{js,ts,jsx,tsx}",
-        "./lib/**/*.{js,ts,jsx,tsx}",
+        "./src/entrypoints/**/*.{js,ts,jsx,tsx}",
+        "./src/components/**/*.{js,ts,jsx,tsx}",
+        "./src/lib/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
         extend: {

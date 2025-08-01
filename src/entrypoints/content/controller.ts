@@ -10,8 +10,8 @@ export class ContentController {
     private textSelectionManager: TextSelectionManager;
     private eventHandler: EventHandler;
 
-    constructor() {
-        this.popupManager = new PopupManager();
+    constructor(shadowRoot: ShadowRoot) {
+        this.popupManager = new PopupManager(shadowRoot);
         this.floatingIconManager = new FloatingIconManager();
 
         this.textSelectionManager = new TextSelectionManager(
