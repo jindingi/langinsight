@@ -1,5 +1,5 @@
 import { atom } from 'jotai'
-import type { TextSelection } from '../../utils/types'
+import type { TextSelection } from '@/utils/types'
 
 export const selectionContentAtom = atom<TextSelection | null>(null)
 export const isTranslationIconVisibleAtom = atom<boolean>(false)
