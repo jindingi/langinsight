@@ -69,7 +69,6 @@ export class TextSelector {
         return {
             text: selectedText,
             context: truncatedContext,
-            rect: rect,
         };
     }
 

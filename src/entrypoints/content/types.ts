@@ -1,7 +1,11 @@
 export interface TextSelection {
     text: string;
     context: string;
-    rect: DOMRect;
+}
+
+export interface ContextOptions {
+    beforeSentences?: number;
+    afterSentences?: number;
 }
 
 export interface PopupState {

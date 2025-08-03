@@ -18,9 +18,10 @@ export function TranslationButton() {
         setMouseClickPosition({ x, y })
         setIsTranslationIconVisible(false)
         logger.log('[TranslationButton.onClick] selectionContent:', selectionContent)
-        if (selectionContent && selectionContent.text.length > 0) {
-            logger.log(`sending message to background: "${selectionContent.text}"`)
-            const response = await sendMessage('translateText', selectionContent.text)
+        const selectedText = selectionContent?.context
+        if (selectedText && selectedText.length > 0) {
+            logger.log(`sending message to background: "${selectedText}"`)
+            const response = await sendMessage('translateText', selectedText)
 
             if (response) {
                 logger.log('[TranslationButton.onClick] response:', response)

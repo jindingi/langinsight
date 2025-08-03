@@ -4,11 +4,18 @@ import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPosi
 import { TranslationButton } from '@/components/TranslationButton'
 import { TextSelector } from './text-selection'
 import { logger } from '@/utils/logger'
+import { getSelectedTextWithContext } from './text-selection-v2'
+import type { TextSelection } from './types'
 
 const DOWNWARD_OFFSET_Y = 18
 const UPWARD_OFFSET_Y = -10
 const MARGIN = 25
 const SELECTION_DIRECTION_THRESHOLD = 5
+
+const CONTEXT_OPTIONS = {
+    beforeSentences: 2,
+    afterSentences: 1
+}
 
 export function SelectionIcon() {
     const iconContainerRef = useRef<HTMLDivElement>(null)
@@ -25,14 +32,26 @@ export function SelectionIcon() {
             }
         }
         logger.log('[SelectionIcon.handleMouseUp]')
-        const textSelection = new TextSelector()
-        const selected = textSelection.getSelectedText()
-        if (selected && selected.text.length > 0 && selected.rect.x && selected.rect.y) {
+        // const textSelection = new TextSelector()
+        // const selected = textSelection.getSelectedText()
+        const selection = window.getSelection()
+        if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
+            // 没有选择文本或选区是空的
+            return
+        }
+        const range = selection.getRangeAt(0)
+        const rect = range.getBoundingClientRect()
+
+        const selected: TextSelection | null = getSelectedTextWithContext(selection, {
+            beforeSentences: CONTEXT_OPTIONS.beforeSentences,
+            afterSentences: CONTEXT_OPTIONS.afterSentences
+        })
+        if (selected && selected.text.length > 0 && rect.x && rect.y) {
             setSelectionContent(selected)
             setIsTranslationIconVisible(true)
             const position = {
-                x: selected.rect.right + window.scrollX,
-                y: selected.rect.bottom + window.scrollY + 5
+                x: rect.right + window.scrollX,
+                y: rect.bottom + window.scrollY + 5
             }
             setTranslationIconPosition(position)
             logger.log('[SelectionIcon.handleMouseUp] translationIconPosition:', position)
