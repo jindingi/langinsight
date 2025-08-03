@@ -3,19 +3,28 @@ import { useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPositionAtom } from '@/entrypoints/content/atom'
 import { TranslationButton } from '@/components/TranslationButton'
 import { TextSelector } from './text-selection'
+import { logger } from '@/utils/logger'
 
 const DOWNWARD_OFFSET_Y = 18
 const UPWARD_OFFSET_Y = -10
 const MARGIN = 25
 const SELECTION_DIRECTION_THRESHOLD = 5
 
-export function SelectionTooltip() {
+export function SelectionIcon() {
+    const iconContainerRef = useRef<HTMLDivElement>(null)
     const [isTranslationIconVisible, setIsTranslationIconVisible] = useAtom(isTranslationIconVisibleAtom)
-    const [selectionContent, setSelectionContent] = useAtom(selectionContentAtom)
+    const setSelectionContent = useSetAtom(selectionContentAtom)
     const [translationIconPosition, setTranslationIconPosition] = useAtom(translationIconPositionAtom)
 
-    const handleMouseUp = useCallback(() => {
-        logger.log('[SelectionTooltip.handleMouseUp]')
+    const handleMouseUp = useCallback((event: MouseEvent) => {
+        if (iconContainerRef.current) {
+            const eventPath = event.composedPath()
+            const insideIcon = eventPath.includes(iconContainerRef.current)
+            if (insideIcon) {
+                return
+            }
+        }
+        logger.log('[SelectionIcon.handleMouseUp]')
         const textSelection = new TextSelector()
         const selected = textSelection.getSelectedText()
         if (selected && selected.text.length > 0 && selected.rect.x && selected.rect.y) {
@@ -26,17 +35,22 @@ export function SelectionTooltip() {
                 y: selected.rect.bottom + window.scrollY + 5
             }
             setTranslationIconPosition(position)
-            logger.log('[SelectionTooltip.handleMouseUp] translationIconPosition:', position)
-            logger.log('[SelectionTooltip.handleMouseUp] selected.context:', selected.context)
+            logger.log('[SelectionIcon.handleMouseUp] translationIconPosition:', position)
+            logger.log('[SelectionIcon.handleMouseUp] selected.context:', selected.context)
         } else {
             setSelectionContent(null)
             setIsTranslationIconVisible(false)
         }
     }, [])
 
-    const handleMouseDown = useCallback(() => {
-        logger.log('[SelectionTooltip.handleMouseDown]')
-        setIsTranslationIconVisible(false)
+    const handleMouseDown = useCallback((event: MouseEvent) => {
+        if (iconContainerRef.current) {
+            const eventPath = event.composedPath()
+            const insideIcon = eventPath.includes(iconContainerRef.current)
+            if (!insideIcon) {
+                setIsTranslationIconVisible(false)
+            }
+        }
     }, [])
 
     useEffect(() => {
@@ -50,10 +64,10 @@ export function SelectionTooltip() {
 
 
     return (
-        <div>
+        <div ref={iconContainerRef}>
             {isTranslationIconVisible && (
                 <div
-                    className="absolute z-[2147483647] bg-zinc-200 dark:bg-zinc-800 rounded-sm shadow-lg overflow-hidden flex items-center"
+                    className="absolute z-[2147483647] flex bg-zinc-200"
                     style={{
                         left: `${translationIconPosition?.x}px`,
                         top: `${translationIconPosition?.y}px`,

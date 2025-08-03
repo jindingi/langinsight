@@ -19,7 +19,7 @@ export default defineConfig({
     ],
     content_scripts: [
       {
-        matches: ['*://paulgraham.com/*'],
+        matches: ['*://paulgraham.com/*', '*://news.ycombinator.com/*'],
         js: ['content-scripts/content.js'],
         run_at: 'document_end'
       }

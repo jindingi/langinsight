@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client';
 import '@/assets/globals.css';
 
 export default defineContentScript({
-    matches: ['*://paulgraham.com/*'],
+    matches: ['*://*/*'],
     cssInjectionMode: 'ui',
     async main(ctx) {
         const ui = await createShadowRootUi(ctx, {

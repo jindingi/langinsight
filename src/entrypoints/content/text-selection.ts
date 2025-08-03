@@ -37,7 +37,7 @@ export class TextSelector {
         if (!paragraphContainer) {
             return null;
         }
-        logger.log('paragraphContainer', paragraphContainer)
+        // logger.log('paragraphContainer', paragraphContainer)
 
         // 4. 获取段落容器的纯文本内容
         const paragraphText = this.getSpecificParagraphText(paragraphContainer, range);
@@ -45,13 +45,14 @@ export class TextSelector {
             return null;
         }
 
-        logger.log('paragraphText', paragraphText);
+        // logger.log('paragraphText', paragraphText);
 
         // 5. 计算选中文本在段落中的位置
         const { startOffset, endOffset } = this.calculateTextPositionInParagraph(range, paragraphContainer, paragraphText);
         if (startOffset === -1 || endOffset === -1) {
             return null;
         }
+        logger.log('[TextSelector.getSelectedText] startOffset:', startOffset, 'endOffset:', endOffset)
 
         // 6. 构建带有 <selected_text> 标签的上下文
         const contextWithTag =
@@ -59,11 +60,11 @@ export class TextSelector {
             `${this.TEXT_TAG_START}${paragraphText.substring(startOffset, endOffset)}${this.TEXT_TAG_END}` +
             `${paragraphText.substring(endOffset)}`;
 
-        logger.log('contextWithTag', contextWithTag)
+        // logger.log('contextWithTag', contextWithTag)
 
         // 7. 控制上下文长度，避免过长的文本
         const truncatedContext = this.truncateContext(contextWithTag);
-        logger.log('truncatedContext', truncatedContext)
+        // logger.log('truncatedContext', truncatedContext)
 
         return {
             text: selectedText,
