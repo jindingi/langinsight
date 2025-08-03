@@ -1,11 +1,12 @@
 import { logger } from '@/utils/logger'
 import { onMessage } from '@/utils/message'
+import { MESSAGE_TYPE_TRANSLATE_TEXT } from '@/consts/message'
 
 
 export default defineBackground(() => {
   logger.info('[background.index]')
 
-  onMessage('translateText', async (message) => {
+  onMessage(MESSAGE_TYPE_TRANSLATE_TEXT, async (message) => {
     logger.log('[background.onMessage] text:', message.data)
 
     const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(message.data)}&langpair=en|zh-CN`;

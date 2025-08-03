@@ -1,23 +1,17 @@
-import { useAtom, useSetAtom, useAtomValue } from 'jotai'
-import { useEffect, useLayoutEffect, useRef, useCallback } from 'react'
+import { useAtom, useSetAtom } from 'jotai'
+import { useEffect, useRef, useCallback } from 'react'
 import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPositionAtom } from '@/entrypoints/content/atom'
 import { TranslationButton } from '@/components/TranslationButton'
-import { TextSelector } from './text-selection'
 import { logger } from '@/utils/logger'
 import { getSelectedTextWithContext } from './text-selection-v2'
 import type { TextSelection } from './types'
-
-const DOWNWARD_OFFSET_Y = 18
-const UPWARD_OFFSET_Y = -10
-const MARGIN = 25
-const SELECTION_DIRECTION_THRESHOLD = 5
 
 const CONTEXT_OPTIONS = {
     beforeSentences: 2,
     afterSentences: 1
 }
 
-export function SelectionIcon() {
+export function Selection() {
     const iconContainerRef = useRef<HTMLDivElement>(null)
     const [isTranslationIconVisible, setIsTranslationIconVisible] = useAtom(isTranslationIconVisibleAtom)
     const setSelectionContent = useSetAtom(selectionContentAtom)
