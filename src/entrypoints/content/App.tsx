@@ -2,15 +2,19 @@ import { atom, useAtom } from 'jotai'
 import { Languages } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { TextSelector } from './text-selection'
 
 const isVisibleAtom = atom(false)
 
 function Content() {
+    const textSelector = new TextSelector()
+    const selectedText = textSelector.getSelectedText()
+    console.log(selectedText)
     return (
         <Accordion type="single" collapsible>
             <AccordionItem value="item-1">
-                <AccordionTrigger>Is it accessible?</AccordionTrigger>
-                <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
+                <AccordionTrigger>{selectedText?.text}</AccordionTrigger>
+                <AccordionContent>{selectedText?.context}</AccordionContent>
             </AccordionItem>
         </Accordion>
     )

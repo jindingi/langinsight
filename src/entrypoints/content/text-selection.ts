@@ -1,7 +1,8 @@
 import type { TextSelection } from './types';
 import debounce from 'lodash.debounce';
+import { logger } from '@/utils/logger';
 
-class TextSelector {
+export class TextSelector {
     private readonly maxContextLength = 1000;
     private readonly beforeSentences = 3; // 选中文本前的句子数量
     private readonly afterSentences = 1;  // 选中文本后的句子数量
@@ -60,8 +61,11 @@ class TextSelector {
             `${this.TEXT_TAG_START}${fullContext.substring(startOffset, endOffset)}${this.TEXT_TAG_END}` +
             `${fullContext.substring(endOffset)}`;
 
+        logger.info('contextWithTag', contextWithTag)
+
         // 6. 控制上下文长度，避免过长的文本
         const truncatedContext = this.truncateContext(contextWithTag);
+        logger.info('truncatedContext', truncatedContext)
 
         return {
             text: selectedText,
