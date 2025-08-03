@@ -1,6 +1,6 @@
 import { sentences as splitSentences } from 'sbd';
 import { logger } from '@/utils/logger';
-import type { ContextOptions, TextSelection } from './types';
+import type { ContextOptions, TextSelection } from '@/utils/types';
 
 
 /**

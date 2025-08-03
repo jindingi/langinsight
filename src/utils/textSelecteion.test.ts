@@ -6,8 +6,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 // 假设您的函数和类型定义在这里
-import { getSelectedTextWithContext } from './text-selection-v2';
-import type { ContextOptions, TextSelection } from './types';
+import { getSelectedTextWithContext } from './textSelection';
 
 // 辅助函数：在 jsdom 中模拟文本选择 (这个函数无需改变)
 function createSelectionInDOM(

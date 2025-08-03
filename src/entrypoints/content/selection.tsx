@@ -3,8 +3,8 @@ import { useEffect, useRef, useCallback } from 'react'
 import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPositionAtom } from '@/entrypoints/content/atom'
 import { TranslationButton } from '@/components/TranslationButton'
 import { logger } from '@/utils/logger'
-import { getSelectedTextWithContext } from './text-selection-v2'
-import type { TextSelection } from './types'
+import { getSelectedTextWithContext } from '@/utils/textSelection'
+import type { TextSelection } from '../../utils/types'
 
 const CONTEXT_OPTIONS = {
     beforeSentences: 2,
