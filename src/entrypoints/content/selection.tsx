@@ -4,7 +4,7 @@ import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPosi
 import { TranslationButton } from '@/components/TranslationButton'
 import { logger } from '@/utils/logger'
 import { getSelectedTextWithContext } from '@/utils/textSelection'
-import type { TextSelection } from '../../utils/types'
+import type { TextSelection } from '@/utils/types'
 
 const CONTEXT_OPTIONS = {
     beforeSentences: 2,
