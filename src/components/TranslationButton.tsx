@@ -22,7 +22,11 @@ export function TranslationButton() {
             if (response) {
                 logger.log('[TranslationButton.onClick] response:', response)
                 // 在下一章，我们会在这里显示一个结果卡片
-                alert(`翻译结果：${response}`); // 临时用 alert 显示
+                if (response.code === 0) {
+                    alert(`翻译结果：${response.data}`); // 临时用 alert 显示
+                } else {
+                    alert(`翻译失败：${response.error}`); // 临时用 alert 显示
+                }
             }
         }
     }
