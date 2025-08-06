@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { sendMessage } from '@/utils/message'
 import { logger } from '@/utils/logger'
 import { MESSAGE_TYPE_TRANSLATE_TEXT } from '@/consts/message'
+import { TranslateRequest, Resp, TranslateType } from '@/utils/types'
 
 export function TranslationButton() {
     const setIsTranslationIconVisible = useSetAtom(isTranslationIconVisibleAtom)
@@ -17,7 +18,10 @@ export function TranslationButton() {
         const selectedText = selectionContent?.context
         if (selectedText && selectedText.length > 0) {
             logger.log(`sending message to background: "${selectedText}"`)
-            const response = await sendMessage(MESSAGE_TYPE_TRANSLATE_TEXT, selectedText)
+            const response: Resp<string> = await sendMessage(MESSAGE_TYPE_TRANSLATE_TEXT, {
+                type: TranslateType.MYMEMORY,
+                selection: selectionContent
+            })
 
             if (response) {
                 logger.log('[TranslationButton.onClick] response:', response)
@@ -25,7 +29,7 @@ export function TranslationButton() {
                 if (response.code === 0) {
                     alert(`翻译结果：${response.data}`); // 临时用 alert 显示
                 } else {
-                    alert(`翻译失败：${response.error}`); // 临时用 alert 显示
+                    alert(`翻译失败：${response.code}`); // 临时用 alert 显示
                 }
             }
         }

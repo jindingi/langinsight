@@ -1,13 +1,10 @@
 import { defineExtensionMessaging } from '@webext-core/messaging';
+import { Resp, TranslateRequest } from '@/utils/types';
 
-interface Response {
-    code: number;
-    data: string;
-    error?: string;
-}
+
 
 interface ProtocolMap {
-    translateText(text: string): Response;
+    translateText(text: TranslateRequest): Resp<string>;
 }
 
 export const { sendMessage, onMessage } = defineExtensionMessaging<ProtocolMap>();
