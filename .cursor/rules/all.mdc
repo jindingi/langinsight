@@ -11,6 +11,7 @@ alwaysApply: true
 - **State**: Use `jotai` to manage states.
 - **Import**: Use relative import (`@` is `src`)
 - **Icon**: Prefer using icons from `lucide-react`.
+- **Unit Test**: Use `Vitest` for unit testing.
 
 ## WXT Framework Standards
 - **File Structure**: Follow the recommended directory structure of the WXT framework.

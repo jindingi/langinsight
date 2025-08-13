@@ -30,5 +30,8 @@ export default defineConfig({
     server: {
       port: 3333,
     },
+  },
+  webExt: {
+    startUrls: ['https://paulgraham.com/ds.html'],
   }
 });
