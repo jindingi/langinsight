@@ -1,35 +1,32 @@
-import { useState } from 'react';
-import reactLogo from '@/assets/react.svg';
-import wxtLogo from '/wxt.svg';
-import './App.css';
+import { useAtom } from 'jotai'
+import * as React from 'react'
+import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/PasswordInput'
+import { apiKeyAtom } from './atom'
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [apiKey, setApiKey] = useAtom(apiKeyAtom)
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://wxt.dev" target="_blank">
-          <img src={wxtLogo} className="logo" alt="WXT logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>WXT + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the WXT and React logos to learn more
-      </p>
-    </>
-  );
+    <div className="p-4 min-w-[320px]">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="apiKey">OpenAI API Key</Label>
+          <PasswordInput
+            id="apiKey"
+            value={apiKey}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApiKey(e.target.value)}
+            placeholder="Enter your API key"
+            className="font-mono"
+          />
+        </div>
+      </form>
+    </div>
+  )
 }
 
-export default App;
+export default App

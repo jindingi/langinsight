@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { sendMessage } from '@/utils/message'
 import { logger } from '@/utils/logger'
 import { MESSAGE_TYPE_TRANSLATE_TEXT } from '@/consts/message'
-import { TranslateRequest, Resp, TranslateType } from '@/utils/types'
+import { Resp, TranslateType } from '@/utils/types'
 
 export function TranslationButton() {
     const setIsTranslationIconVisible = useSetAtom(isTranslationIconVisibleAtom)

@@ -81,3 +81,6 @@ globs: **/*.tsx, **/*.jsx, components/**/*
 ## Shadcn/ui Standards
 - Prioritize using components provided by Shadcn/ui.
 - If you need to customize Shadcn/ui components, follow the best practices in the Shadcn/ui documentation.
+- **Installation and Structure**:
+  - Use `pnpm dlx shadcn-ui@latest add [component]` to install components.
+  - Components installed via the Shadcn CLI should be in `src/components/ui`. Custom components should be placed in `src/components`.

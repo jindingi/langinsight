@@ -8,7 +8,9 @@ alwaysApply: true
 - **UI Components**: Build the user interface with Shadcn/ui.
 - **Styling**: Use Tailwind CSS for styling.
 - **Code Formatting**: Keep code clean and readable, following Prettier formatting standards (if configured).
-
+- **State**: Use `jotai` to manage states.
+- **Import**: Use relative import (`@` is `src`)
+- **Icon**: Prefer using icons from `lucide-react`.
 
 ## WXT Framework Standards
 - **File Structure**: Follow the recommended directory structure of the WXT framework.

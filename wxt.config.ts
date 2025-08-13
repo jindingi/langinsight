@@ -15,7 +15,8 @@ export default defineConfig({
     description: 'Understand words and sentences instantly - select any text to see its meaning',
     version: '0.0.4',
     permissions: [
-      'activeTab'
+      'activeTab',
+      'storage'
     ],
     content_scripts: [
       {
