@@ -35,7 +35,6 @@ globs: **/*.ts, **/*.tsx, **/*.d.ts
 - Prefer async/await over Promises
 
 ## Best Practices
-- Enable strict mode in tsconfig.json
 - Use readonly for immutable properties
 - Leverage discriminated unions for type safety
 - Use type guards for runtime type checking
@@ -51,7 +50,5 @@ globs: **/*.ts, **/*.tsx, **/*.d.ts
 
 ## Patterns
 - Use the Builder pattern for complex object creation
-- Implement the Repository pattern for data access
-- Use the Factory pattern for object creation
 - Leverage dependency injection
 - Use the Module pattern for encapsulation 

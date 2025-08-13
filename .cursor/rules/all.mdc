@@ -1,0 +1,15 @@
+---
+alwaysApply: true
+---
+
+## General Rules
+- **Language and Framework**: Use TypeScript and React, following the structure and conventions of the WXT framework.
+- **Package Manager**: Use `pnpm` for dependency management.
+- **UI Components**: Build the user interface with Shadcn/ui.
+- **Styling**: Use Tailwind CSS for styling.
+- **Code Formatting**: Keep code clean and readable, following Prettier formatting standards (if configured).
+
+
+## WXT Framework Standards
+- **File Structure**: Follow the recommended directory structure of the WXT framework.
+- **Manifest**: Configure the project in `wxt.config.ts` instead of manually editing `manifest.json`.

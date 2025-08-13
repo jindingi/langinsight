@@ -76,3 +76,8 @@ globs: **/*.tsx, **/*.jsx, components/**/*
 - Keep styles close to components
 - Use proper imports/exports
 - Document complex component logic 
+
+
+## Shadcn/ui Standards
+- Prioritize using components provided by Shadcn/ui.
+- If you need to customize Shadcn/ui components, follow the best practices in the Shadcn/ui documentation.
