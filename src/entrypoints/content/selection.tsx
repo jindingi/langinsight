@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPositionAtom } from '@/entrypoints/content/atom'
 import { TranslationButton } from '@/components/TranslationButton'
 import { logger } from '@/utils/logger'
-import { getSelectedTextWithContext } from '@/utils/textSelection'
+import { textSelectionService } from '@/services/text-selection'
 import type { TextSelection } from '@/utils/types'
 
 const CONTEXT_OPTIONS = {
@@ -36,7 +36,7 @@ export function Selection() {
         const range = selection.getRangeAt(0)
         const rect = range.getBoundingClientRect()
 
-        const selected: TextSelection | null = getSelectedTextWithContext(selection, {
+        const selected: TextSelection | null = textSelectionService.getSelectedTextWithContext(selection, {
             beforeSentences: CONTEXT_OPTIONS.beforeSentences,
             afterSentences: CONTEXT_OPTIONS.afterSentences
         })

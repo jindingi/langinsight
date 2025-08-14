@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { processTextSelection } from './textProcessor'
+import { textSelectionService } from '@/services/text-selection'
 
 /**
  * 格式化测试输出，使其符合预期格式
@@ -15,7 +15,7 @@ function formatTestOutput(text: string): string {
 describe('processTextSelection', () => {
   // 测试1：空选区
   it('should return null if selection is empty', () => {
-    const result = processTextSelection({
+    const result = textSelectionService.processTextSelection({
       fullText: 'Hello world',
       startOffset: 5,
       endOffset: 5,
@@ -28,7 +28,7 @@ describe('processTextSelection', () => {
   it('should return only the wrapped selected text with default options', () => {
     const fullText = 'The quick brown fox jumps over the lazy dog.'
     const selectedText = 'fox'
-    const result = processTextSelection({
+    const result = textSelectionService.processTextSelection({
       fullText,
       startOffset: fullText.indexOf(selectedText),
       endOffset: fullText.indexOf(selectedText) + selectedText.length,
@@ -44,7 +44,7 @@ describe('processTextSelection', () => {
     const fullText = 'to be, or not to be, that is the question.'
     const selectedText = 'to be'
     const startOffset = fullText.indexOf(selectedText, fullText.indexOf(selectedText) + 1) // 找第二个出现位置
-    const result = processTextSelection(
+    const result = textSelectionService.processTextSelection(
       {
         fullText,
         startOffset,
@@ -65,7 +65,7 @@ describe('processTextSelection', () => {
   it('should get basic context with before and after sentences', () => {
     const fullText = 'First sentence. Second sentence is here. Third sentence follows.'
     const selectedText = 'Second sentence is here.'
-    const result = processTextSelection(
+    const result = textSelectionService.processTextSelection(
       {
         fullText,
         startOffset: fullText.indexOf(selectedText),
@@ -86,7 +86,7 @@ describe('processTextSelection', () => {
   it('should handle selection at the start of text', () => {
     const fullText = 'First sentence. Second sentence.'
     const selectedText = 'First sentence.'
-    const result = processTextSelection(
+    const result = textSelectionService.processTextSelection(
       {
         fullText,
         startOffset: fullText.indexOf(selectedText),
@@ -107,7 +107,7 @@ describe('processTextSelection', () => {
   it('should handle selection at the end of text', () => {
     const fullText = 'First sentence. Last sentence.'
     const selectedText = 'Last sentence.'
-    const result = processTextSelection(
+    const result = textSelectionService.processTextSelection(
       {
         fullText,
         startOffset: fullText.indexOf(selectedText),
