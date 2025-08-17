@@ -19,7 +19,7 @@ export function TranslationButton() {
         if (selectedText && selectedText.length > 0) {
             logger.log(`sending message to background: "${selectedText}"`)
             const response: Resp<string> = await sendMessage(MESSAGE_TYPE_TRANSLATE_TEXT, {
-                type: TranslateType.MYMEMORY,
+                type: TranslateType.AI,
                 selection: selectionContent
             })
 

@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPositionAtom } from '@/entrypoints/content/atom'
 import { TranslationButton } from '@/components/TranslationButton'
 import { logger } from '@/utils/logger'
-import { textSelectionService } from '@/services/text-selection'
+import { textSelectionService } from '@/services/text-selection-service'
 import type { TextSelection } from '@/utils/types'
 
 const CONTEXT_OPTIONS = {

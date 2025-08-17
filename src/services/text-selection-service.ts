@@ -1,5 +1,6 @@
 import { sentences as splitSentences } from 'sbd'
 import type { ContextOptions, TextSelection } from '@/utils/types'
+import { SELECTED_TEXT_MARKER, SELECTED_TEXT_MARKER_END } from '@/consts/selection'
 
 export interface TextRange {
   fullText: string
@@ -110,7 +111,7 @@ class TextSelectionService {
     // 组合最终结果
     const parts = []
     if (contextBefore) parts.push(contextBefore.trim())
-    parts.push(`<selected_text>${selectedText}</selected_text>`)
+    parts.push(`${SELECTED_TEXT_MARKER}${selectedText}${SELECTED_TEXT_MARKER_END}`)
     if (contextAfter) parts.push(contextAfter.trim())
 
     return {

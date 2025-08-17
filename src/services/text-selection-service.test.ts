@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { textSelectionService } from '@/services/text-selection'
+import { textSelectionService } from '@/services/text-selection-service'
 
 /**
  * 格式化测试输出，使其符合预期格式

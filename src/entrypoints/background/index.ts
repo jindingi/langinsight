@@ -2,16 +2,26 @@ import { logger } from '@/utils/logger'
 import { onMessage } from '@/utils/message'
 import { MESSAGE_TYPE_TRANSLATE_TEXT } from '@/consts/message'
 import { TextSelection, TranslateType, Resp } from '@/utils/types'
+import { llmService } from '@/services/llm-service'
 
 const translationActionMap: Record<TranslateType, (selectedText: TextSelection) => Promise<Resp<string>>> = {
   [TranslateType.MYMEMORY]: mymemoryTranslateText,
-  [TranslateType.AI]: dummyTranslateText,
+  [TranslateType.AI]: aiSelectedTextMeaning,
 }
 
-async function dummyTranslateText(selectedText: TextSelection): Promise<Resp<string>> {
+async function aiTranslateText(selectedText: TextSelection): Promise<Resp<string>> {
+  const result = await llmService.translateText(selectedText.context, "en-US", "zh-CN")
   return {
-    code: -1,
-    data: 'not implemented yet',
+    code: 0,
+    data: result,
+  }
+}
+
+async function aiSelectedTextMeaning(selectedText: TextSelection): Promise<Resp<string>> {
+  const result = await llmService.selectedTextMeaning(selectedText.context)
+  return {
+    code: 0,
+    data: result,
   }
 }
 
@@ -39,6 +49,7 @@ export default defineBackground(() => {
       return await translateFunction(selectedText)
     }
 
+    logger.error('[background.onMessage] translateFunction not found')
     return {
       code: -1,
       data: '',

@@ -1,6 +1,6 @@
 import OpenAI from 'openai'
-import { getDefaultStore } from 'jotai'
 import { apiKeyAtom } from '@/entrypoints/popup/atom'
+import { wxtStorageAdapter } from '@/lib/storage'
 
 /**
  * OpenAI client manager that maintains a singleton instance
@@ -31,8 +31,7 @@ class OpenAIManager {
    * 2. API key has changed
    */
   async getClient(): Promise<OpenAI> {
-    const store = getDefaultStore()
-    const apiKey = await store.get(apiKeyAtom)
+    const apiKey = await wxtStorageAdapter.getItem('openai-api-key')
 
     if (!apiKey) {
       throw new Error('OpenAI API key not found. Please set it in the extension popup.')
@@ -45,11 +44,14 @@ class OpenAIManager {
         apiKey,
       })
       this.currentApiKey = apiKey
+      logger.log('OpenAI client created')
+      const testResult = await this.testConnection()
+      logger.log('OpenAI test connection result:', testResult)
     }
 
     return this.client
   }
-  
+
   async testConnection(model: string = this.defaultModel): Promise<boolean> {
     const client = await this.getClient()
     const response = await client.chat.completions.create({
@@ -66,8 +68,7 @@ class OpenAIManager {
    * Check if a valid API key is set
    */
   async hasValidApiKey(): Promise<boolean> {
-    const store = getDefaultStore()
-    const apiKey = await store.get(apiKeyAtom)
+    const apiKey = await wxtStorageAdapter.getItem('openai-api-key')
     return Boolean(apiKey)
   }
 
