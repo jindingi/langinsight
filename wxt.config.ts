@@ -33,5 +33,8 @@ export default defineConfig({
   },
   webExt: {
     startUrls: ['https://paulgraham.com/ds.html'],
+    chromiumArgs: [
+      '--user-data-dir=./.wxt/chrome-data', 
+    ],
   }
 });
