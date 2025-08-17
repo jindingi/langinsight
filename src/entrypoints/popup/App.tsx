@@ -2,10 +2,10 @@ import { useAtom } from 'jotai'
 import * as React from 'react'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/PasswordInput'
-import { apiKeyAtom } from './atom'
+import { configFields } from './atom'
 
 function App() {
-  const [apiKey, setApiKey] = useAtom(apiKeyAtom)
+  const [apiKey, setApiKey] = useAtom(configFields.openaiApiKey)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

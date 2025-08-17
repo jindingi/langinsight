@@ -1,6 +1,6 @@
+import { getConfig } from '@/config/config'
 import OpenAI from 'openai'
-import { apiKeyAtom } from '@/entrypoints/popup/atom'
-import { wxtStorageAdapter } from '@/lib/storage'
+
 
 /**
  * OpenAI client manager that maintains a singleton instance
@@ -31,7 +31,8 @@ class OpenAIManager {
    * 2. API key has changed
    */
   async getClient(): Promise<OpenAI> {
-    const apiKey = await wxtStorageAdapter.getItem('openai-api-key')
+    const cfg = await getConfig()
+    const apiKey = cfg?.openaiApiKey
 
     if (!apiKey) {
       throw new Error('OpenAI API key not found. Please set it in the extension popup.')
@@ -68,7 +69,8 @@ class OpenAIManager {
    * Check if a valid API key is set
    */
   async hasValidApiKey(): Promise<boolean> {
-    const apiKey = await wxtStorageAdapter.getItem('openai-api-key')
+    const cfg = await getConfig()
+    const apiKey = cfg?.openaiApiKey
     return Boolean(apiKey)
   }
 
