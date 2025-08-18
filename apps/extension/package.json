@@ -14,7 +14,9 @@
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare",
     "test": "vitest run",
-    "get-chrome-debugging-port": "python3 scripts/get_chrome_debugging_port.py"
+    "get-chrome-debugging-port": "python3 scripts/get_chrome_debugging_port.py",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.11",

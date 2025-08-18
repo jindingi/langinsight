@@ -11,7 +11,7 @@ export function TranslationButton() {
     const setIsTranslationIconVisible = useSetAtom(isTranslationIconVisibleAtom)
     const selectionContent = useAtomValue(selectionContentAtom)
 
-    const onClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    const onClick = async () => {
         logger.log('[TranslationButton.onClick]')
         setIsTranslationIconVisible(false)
         logger.log('[TranslationButton.onClick] selectionContent:', selectionContent)

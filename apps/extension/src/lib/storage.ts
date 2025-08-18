@@ -1,5 +1,4 @@
 import { storage } from '#imports'
-import { getConfig } from '@/config/config'
 import { Config, configSchema } from '@/config/type'
 import { logger } from '@/utils/logger'
 

@@ -13,7 +13,7 @@ export default defineContentScript({
             name: `langinsight-selection`,
             position: 'overlay',
             anchor: 'body',
-            onMount: (container, shadow, shadowHost) => {
+            onMount: (container) => {
                 // const controller = new ContentController(shadow);
                 // controller.setupEventListeners();
 

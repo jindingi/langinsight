@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* ──────────────  logger.ts  ────────────── */
 
 const isDev = import.meta.env.DEV

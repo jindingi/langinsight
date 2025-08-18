@@ -1,0 +1,22 @@
+# 构建输出
+dist
+.wxt
+.turbo
+.output
+
+# 依赖
+node_modules
+
+# 其他
+.DS_Store
+*.log
+coverage
+.env*
+
+# 包管理器文件
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 自动生成的文件
+*.d.ts

@@ -1,5 +1,5 @@
 import { wxtStorageAdapter } from '@/lib/storage'
-import { Config, configSchema } from './type'
+import { Config } from './type'
 import { DEFAULT_CONFIG_PROD } from './config.prod'
 import { logger } from '@/utils/logger'
 

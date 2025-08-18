@@ -1,6 +1,6 @@
 import { CONFIG_STORAGE_KEY, getConfig } from '@/config/config'
 import { Config } from '@/config/type'
-import { Atom, atom } from 'jotai'
+import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { wxtStorageAdapter } from '@/lib/storage'
 import { logger } from '@/utils/logger'

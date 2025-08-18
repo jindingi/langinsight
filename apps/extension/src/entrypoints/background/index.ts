@@ -10,6 +10,7 @@ const translationActionMap: Record<TranslateType, (selectedText: TextSelection) 
   [TranslateType.AI]: aiSelectedTextMeaning,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function aiTranslateText(selectedText: TextSelection): Promise<Resp<string>> {
   const result = await llmService.translateText(selectedText.context, "en-US", "zh-CN")
   return {
