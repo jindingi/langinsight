@@ -18,7 +18,7 @@ function App() {
           <Label htmlFor="apiKey">OpenAI API Key</Label>
           <PasswordInput
             id="apiKey"
-            value={apiKey}
+            value={apiKey || ''}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApiKey(e.target.value)}
             placeholder="Enter your API key"
             className="font-mono"

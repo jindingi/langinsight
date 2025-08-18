@@ -33,6 +33,7 @@ class OpenAIManager {
   async getClient(): Promise<OpenAI> {
     const cfg = await getConfig()
     const apiKey = cfg?.openaiApiKey
+    logger.info('OpenAI API key', cfg, apiKey)
 
     if (!apiKey) {
       throw new Error('OpenAI API key not found. Please set it in the extension popup.')
