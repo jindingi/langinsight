@@ -6,7 +6,6 @@ import { logger } from '@/utils/logger'
 
 let config: Config
 
-let DEFAULT_CONFIG: Config
 export const CONFIG_STORAGE_KEY = 'config'
 
 export async function getConfig(): Promise<Config> {
@@ -18,7 +17,6 @@ export async function getConfig(): Promise<Config> {
 
 export async function initConfig() {
     const defaultConfig = await loadDefaultConfig()
-    DEFAULT_CONFIG = defaultConfig
 
     const storedConfig = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY)
     if (storedConfig) {
@@ -26,16 +24,17 @@ export async function initConfig() {
         logger.info('Config loaded from storage', config)
     } else {
         logger.info('No config in storage, using default config')
-        config = DEFAULT_CONFIG
+        await wxtStorageAdapter.setItem(CONFIG_STORAGE_KEY, defaultConfig)
+        config = defaultConfig
     }
 
 
     wxtStorageAdapter.watch(CONFIG_STORAGE_KEY, (value: Config | null) => {
-        config = value || DEFAULT_CONFIG
+        config = value || defaultConfig
         logger.info('Config updated', config)
     })
 
-    logger.info('Config initialized', config, DEFAULT_CONFIG)
+    logger.info('Config initialized', config, defaultConfig)
 }
 
 async function loadDefaultConfig(): Promise<Config> {
