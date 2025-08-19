@@ -9,16 +9,17 @@ let config: Config
 export const CONFIG_STORAGE_KEY = 'config'
 
 export async function getConfig(): Promise<Config> {
-    if (!config) {
+    const res = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY, DEFAULT_CONFIG_PROD)
+    if (!res) {
         throw new Error('Config not initialized')
     }
-    return config
+    return res
 }
 
 export async function initConfig() {
     const defaultConfig = await loadDefaultConfig()
 
-    const storedConfig = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY)
+    const storedConfig = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY, defaultConfig)
     if (storedConfig) {
         config = storedConfig
         logger.info('Config loaded from storage', config)
@@ -29,10 +30,10 @@ export async function initConfig() {
     }
 
 
-    wxtStorageAdapter.watch(CONFIG_STORAGE_KEY, (value: Config | null) => {
+    await wxtStorageAdapter.subscribe(CONFIG_STORAGE_KEY, (value: Config | null) => {
         config = value || defaultConfig
         logger.info('Config updated', config)
-    })
+    }, defaultConfig)
 
     logger.info('Config initialized', config, defaultConfig)
 }

@@ -6,7 +6,7 @@ import { wxtStorageAdapter } from '@/lib/storage'
 import { logger } from '@/utils/logger'
 
 
-const configAtom = atomWithStorage(CONFIG_STORAGE_KEY, null, wxtStorageAdapter)
+const configAtom = atomWithStorage<Config | null>(CONFIG_STORAGE_KEY, null, wxtStorageAdapter)
 
 type Keys = keyof Config
 

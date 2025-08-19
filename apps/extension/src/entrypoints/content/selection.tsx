@@ -1,10 +1,11 @@
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useRef, useCallback } from 'react'
 import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPositionAtom } from '@/entrypoints/content/atom'
-import { TranslationButton } from '@/components/TranslationButton'
+// import { TranslationButton } from '@/components/TranslationButton'
 import { logger } from '@/utils/logger'
 import { textSelectionService } from '@/services/text-selection-service'
 import type { TextSelection } from '@/utils/types'
+import Chat from '@/components/Chat'
 
 const CONTEXT_OPTIONS = {
     beforeSentences: 2,
@@ -16,6 +17,7 @@ export function Selection() {
     const [isTranslationIconVisible, setIsTranslationIconVisible] = useAtom(isTranslationIconVisibleAtom)
     const setSelectionContent = useSetAtom(selectionContentAtom)
     const [translationIconPosition, setTranslationIconPosition] = useAtom(translationIconPositionAtom)
+    const selectionContent = useAtomValue(selectionContentAtom)
 
     const handleMouseUp = useCallback((event: MouseEvent) => {
         if (iconContainerRef.current) {
@@ -80,13 +82,15 @@ export function Selection() {
         <div ref={iconContainerRef}>
             {isTranslationIconVisible && (
                 <div
-                    className="absolute z-[2147483647] flex bg-zinc-200"
+                    className="absolute z-[2147483647] flex"
                     style={{
                         left: `${translationIconPosition?.x}px`,
                         top: `${translationIconPosition?.y}px`,
                     }}
                 >
-                    <TranslationButton />
+                    <div className="w-[400px] h-[500px] bg-background border rounded-lg shadow-lg overflow-hidden">
+                        { selectionContent && selectionContent.context && <Chat initialInput={selectionContent.context} /> }
+                    </div>
                 </div>
             )}
         </div>
