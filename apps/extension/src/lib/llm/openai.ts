@@ -1,6 +1,6 @@
 import { getConfig } from '@/config/config'
 import OpenAI from 'openai'
-
+import { logger } from '@/utils/logger'
 
 /**
  * OpenAI client manager that maintains a singleton instance
@@ -35,7 +35,7 @@ class OpenAIManager {
     const apiKey = cfg?.openaiApiKey
     logger.info('OpenAI API key', cfg, apiKey)
 
-    if (!apiKey) {
+    if (!apiKey || apiKey.trim() === '') {
       throw new Error('OpenAI API key not found. Please set it in the extension popup.')
     }
 
@@ -60,7 +60,7 @@ class OpenAIManager {
       model,
       messages: [{ role: 'user', content: 'Say hello to me. Do not say anything else.' }],
     })
-    if (response.choices?.[0]?.message?.content) {
+    if (response?.choices?.[0]?.message?.content) {
       return true
     }
     return false

@@ -2,7 +2,7 @@ import { useAtom } from 'jotai'
 import * as React from 'react'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/PasswordInput'
-import { configFields } from './atom'
+import { configFields } from '@/config/atom'
 
 function App() {
   const [apiKey, setApiKey] = useAtom(configFields.openaiApiKey)

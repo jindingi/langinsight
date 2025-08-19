@@ -23,9 +23,9 @@ globs: **/*.ts, **/*.tsx, **/*.d.ts
 ## Code Organization
 - Keep type definitions close to where they're used
 - Export types and interfaces from dedicated type files when shared
-- Use barrel exports (index.ts) for organizing exports
 - Place shared types in a `types` directory
 - Co-locate component props with their components
+- Use `@` as an alias for module imports
 
 ## Functions
 - Use explicit return types for public functions
