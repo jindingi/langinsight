@@ -9,6 +9,7 @@ import { Send, Square } from "lucide-react";
 import { SELECTED_TEXT_MARKER, SELECTED_TEXT_MARKER_END } from "@/consts/selection"
 import { configFields } from "@/config/atom";
 import { useAtomValue } from "jotai";
+import { Response as AIResponse } from "@/components/ai-elements/response";
 
 const systemPromptV2 = `
 你是一个高效精准的上下文翻译引擎，专为外语学习者设计。
@@ -67,7 +68,7 @@ function Chat({ initialInput }: { initialInput: string }) {
         return result.toUIMessageStreamResponse();
     }
 
-    const { error, messages, sendMessage, stop, status} = useChat({
+    const { error, messages, sendMessage, stop, status } = useChat({
         transport: new DefaultChatTransport({
             fetch: customFetch,
         }),
@@ -93,12 +94,17 @@ function Chat({ initialInput }: { initialInput: string }) {
                                 switch (part.type) {
                                     case "text":
                                         return (
-                                            <div
-                                                key={`${message.id}-${i}`}
-                                                className="whitespace-pre-wrap break-words"
-                                            >
-                                                {part.text}
-                                            </div>
+                                            message.role !== "user" ?
+                                                <AIResponse key={`${message.id}-${i}`}>
+                                                    {part.text}
+                                                </AIResponse>
+                                                :
+                                                <div
+                                                    key={`${message.id}-${i}`}
+                                                    className="whitespace-pre-wrap break-words"
+                                                >
+                                                    {part.text}
+                                                </div>
                                         );
                                 }
                             })}
