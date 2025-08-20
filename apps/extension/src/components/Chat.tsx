@@ -6,36 +6,10 @@ import { logger } from "@/utils/logger";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send, Square } from "lucide-react";
-import { SELECTED_TEXT_MARKER, SELECTED_TEXT_MARKER_END } from "@/consts/selection"
 import { configFields } from "@/config/atom";
 import { useAtomValue } from "jotai";
 import { Response as AIResponse } from "@/components/ai-elements/response";
-
-const systemPromptV2 = `
-你是一个高效精准的上下文翻译引擎，专为外语学习者设计。
-
-# 我的任务
-我将提供一段外文文本和你需要解释的划选内容（由 '${SELECTED_TEXT_MARKER}' 和 '${SELECTED_TEXT_MARKER_END}' 标注）。
-
-# 你的任务
-1.  唯一目标：给出划选内容在**当前上下文中最贴切、最自然的核心释义**，并给出简洁的解释(少于5句话)。
-2.  输出要求：
-    *   **简洁**：只输出释义和解释，不要有任何开场白、结束语。
-    *   **准确**：释义必须严格基于当前文本的语境，避免通用解释。
-    *   **语言**：使用流畅自然的中文。
-    *   **格式**: 使用Markdown格式输出。
-
-# 输出格式
-严格且仅输出以下格式，不要有任何其他文字：
-TODO: 使用模版
-## 释义
-[在这里填写唯一的核心释义]
-
-## 解释
-[在这里填写选中文本在上下文中的具体含义]
-
-现在，请翻译我划选的内容。
-`
+import { wordMeaningPrompt } from "@/prompts/word_meaning";
 
 function Chat({ initialInput }: { initialInput: string }) {
     logger.log('[ChatApp] initialInput:', initialInput)
@@ -54,14 +28,11 @@ function Chat({ initialInput }: { initialInput: string }) {
         const m = JSON.parse(init?.body as string);
         logger.log('[ChatApp.customFetch] messages:', m.messages)
         const modelMessages: ModelMessage[] = convertToModelMessages(m.messages)
-        if (modelMessages.length > 0 && modelMessages[0].role !== "system") {
-            modelMessages.unshift({
-                role: "system",
-                content: systemPromptV2,
-            })
-        }
+        const systemPrompt = wordMeaningPrompt
+        logger.log('[ChatApp.customFetch] systemPrompt:', systemPrompt)
         const result = streamText({
             model: deepseek("deepseek-chat"),
+            system: systemPrompt,
             messages: modelMessages,
             abortSignal: init?.signal as AbortSignal | undefined,
         });

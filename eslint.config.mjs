@@ -13,7 +13,10 @@ export default tseslint.config(
         ".prettierrc.js",
         "node_modules",
         "**/*.test.ts",
-        "apps/extension/node_modules", "apps/extension/.wxt", "apps/extension/.turbo", "apps/extension/.output"])
+        "apps/extension/node_modules", "apps/extension/.wxt", "apps/extension/.turbo", "apps/extension/.output",
+        "**/*.precompiled.ts",
+    ])
+
 );
 
 // export default defineConfig([globalIgnores([".config/"])]);
