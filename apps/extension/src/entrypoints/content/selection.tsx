@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { useEffect, useRef, useCallback, Suspense } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPositionAtom } from '@/entrypoints/content/atom'
 import { textSelectionService } from '@/services/text-selection-service'
 import type { TextSelection } from '@/utils/types'
@@ -89,16 +89,8 @@ export function Selection() {
                 >
                     <div className="w-[400px] h-[500px] bg-background border rounded-lg shadow-lg overflow-hidden">
                         { selectionContent && selectionContent.context && (
-                            <Suspense
-                                fallback={
-                                    <div className="h-full w-full flex items-center justify-center text-sm text-muted-foreground">
-                                        Loading config…
-                                    </div>
-                                }
-                            >
                                 <Chat initialInput={selectionContent.context} />
-                            </Suspense>
-                        ) }
+                        )}
                     </div>
                 </div>
             )}
