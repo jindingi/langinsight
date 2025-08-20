@@ -1,7 +1,7 @@
 import { createDeepSeek } from "@ai-sdk/deepseek";
 import { useChat } from "@ai-sdk/react";
 import { convertToModelMessages, DefaultChatTransport, ModelMessage, streamText } from "ai";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { logger } from "@/utils/logger";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,10 +25,14 @@ function Chat({ initialInput }: { initialInput: string }) {
     logger.log('[ChatApp] initialInput:', initialInput)
     const [input, setInput] = useState(initialInput);
     const openaiApiKey = useAtomValue(configFields.openaiApiKey)
+    const isApiKeyReady = useMemo(() => typeof openaiApiKey === 'string' && openaiApiKey.trim().length > 0, [openaiApiKey])
 
     const customFetch = async (_input: RequestInfo | URL, init?: RequestInit) => {
         // TODO: 有个问题，首次创建时，不会传bearer token，导致401
-        logger.info('[ChatApp] openaiApiKey:', openaiApiKey)
+        logger.info('[ChatApp] API key present:', isApiKeyReady)
+        if (!isApiKeyReady) {
+            return new Response('Missing API key', { status: 401, statusText: 'Unauthorized' })
+        }
         const deepseek = createDeepSeek({
             apiKey: openaiApiKey || '',
         })
@@ -90,6 +94,9 @@ function Chat({ initialInput }: { initialInput: string }) {
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
+                    if (!isApiKeyReady) {
+                        return
+                    }
                     sendMessage({ text: input });
                     setInput("");
                 }}
@@ -103,14 +110,16 @@ function Chat({ initialInput }: { initialInput: string }) {
                 <div className="flex gap-2">
                     <Input
                         value={input}
-                        placeholder="Say something..."
+                        placeholder={isApiKeyReady ? "Say something..." : (openaiApiKey == null ? "Loading config…" : "Please set your API key in settings")}
                         onChange={(e) => setInput(e.currentTarget.value)}
                         className="flex-1 bg-gray-50 text-gray-900 dark:bg-gray-700 dark:text-gray-100 dark:placeholder:text-gray-400"
+                        disabled={!isApiKeyReady}
                     />
                     <Button
                         type="submit"
                         size="icon"
                         className="shrink-0"
+                        disabled={!isApiKeyReady}
                     >
                         <Send className="h-4 w-4" />
                     </Button>

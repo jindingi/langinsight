@@ -1,8 +1,6 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, Suspense } from 'react'
 import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPositionAtom } from '@/entrypoints/content/atom'
-// import { TranslationButton } from '@/components/TranslationButton'
-import { logger } from '@/utils/logger'
 import { textSelectionService } from '@/services/text-selection-service'
 import type { TextSelection } from '@/utils/types'
 import Chat from '@/components/Chat'
@@ -27,7 +25,7 @@ export function Selection() {
                 return
             }
         }
-        logger.log('[SelectionIcon.handleMouseUp]')
+        // logger.log('[SelectionIcon.handleMouseUp]')
         // const textSelection = new TextSelector()
         // const selected = textSelection.getSelectedText()
         const selection = window.getSelection()
@@ -50,8 +48,8 @@ export function Selection() {
                 y: rect.bottom + window.scrollY + 5
             }
             setTranslationIconPosition(position)
-            logger.log('[SelectionIcon.handleMouseUp] translationIconPosition:', position)
-            logger.log('[SelectionIcon.handleMouseUp] selected.context:', selected.context)
+            // logger.log('[SelectionIcon.handleMouseUp] translationIconPosition:', position)
+            // logger.log('[SelectionIcon.handleMouseUp] selected.context:', selected.context)
         } else {
             setSelectionContent(null)
             setIsTranslationIconVisible(false)
@@ -81,6 +79,7 @@ export function Selection() {
     return (
         <div ref={iconContainerRef}>
             {isTranslationIconVisible && (
+                // TODO: 把icon加回来
                 <div
                     className="absolute z-[2147483647] flex"
                     style={{
@@ -89,7 +88,17 @@ export function Selection() {
                     }}
                 >
                     <div className="w-[400px] h-[500px] bg-background border rounded-lg shadow-lg overflow-hidden">
-                        { selectionContent && selectionContent.context && <Chat initialInput={selectionContent.context} /> }
+                        { selectionContent && selectionContent.context && (
+                            <Suspense
+                                fallback={
+                                    <div className="h-full w-full flex items-center justify-center text-sm text-muted-foreground">
+                                        Loading config…
+                                    </div>
+                                }
+                            >
+                                <Chat initialInput={selectionContent.context} />
+                            </Suspense>
+                        ) }
                     </div>
                 </div>
             )}

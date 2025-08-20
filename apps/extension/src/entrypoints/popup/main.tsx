@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import '@/assets/globals.css';
 import { initConfig } from '@/config/config.ts';
-import { initConfigFields } from '../../config/atom.ts';
+import { initConfigFields } from '@/config/atom.ts';
 
 
 async function initApp() {
@@ -12,7 +12,7 @@ async function initApp() {
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      <App />
+        <App />
     </React.StrictMode>,
   );
 }

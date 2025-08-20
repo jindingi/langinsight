@@ -6,7 +6,7 @@ import { wxtStorageAdapter } from '@/lib/storage'
 import { logger } from '@/utils/logger'
 
 
-const configAtom = atomWithStorage<Config | null>(CONFIG_STORAGE_KEY, null, wxtStorageAdapter)
+let configAtom = atomWithStorage<Config | null>(CONFIG_STORAGE_KEY, null, wxtStorageAdapter)
 
 type Keys = keyof Config
 
@@ -19,9 +19,9 @@ function getConfigFieldAtom<K extends Keys>(key: K) {
       }
       return value[key]
     },
-    async (get, set, newVal: Partial<Config[K]>) => {
+    (get, set, newVal: Partial<Config[K]>) => {
       logger.info(`Setting ${key} to configAtom`)
-      const currentValue = await get(configAtom)
+      const currentValue = get(configAtom)
       if (currentValue == null) {
         return
       }
@@ -52,5 +52,6 @@ export let configFields: Map
 
 export async function initConfigFields() {
   const config = await getConfig()
+  configAtom = atomWithStorage<Config | null>(CONFIG_STORAGE_KEY, config, wxtStorageAdapter)
   configFields = buildConfigFields(config)
 }

@@ -33,7 +33,7 @@ export class WXTStorageAdapter implements AsyncStorage<Config | null> {
         logger.error(`Error parsing item ${storageKey}`, result.error)
         return null
       }
-      logger.info(`Got item ${storageKey} ${resultStr}`)
+      logger.info(`Got item ${storageKey}`)
       return result.data
     } catch (error) {
       logger.error(`Error parsing item ${storageKey}`, error)
@@ -84,7 +84,6 @@ export class WXTStorageAdapter implements AsyncStorage<Config | null> {
       callback(newValue)
     })
 
-    // Return a no-op function since we can't synchronously unsubscribe
     return () => { unwatch() }
   }
 }
