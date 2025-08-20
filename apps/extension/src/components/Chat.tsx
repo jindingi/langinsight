@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { logger } from "@/utils/logger";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
+import { Send, Square } from "lucide-react";
 import { SELECTED_TEXT_MARKER, SELECTED_TEXT_MARKER_END } from "@/consts/selection"
 import { configFields } from "@/config/atom";
 import { useAtomValue } from "jotai";
@@ -28,8 +28,7 @@ function Chat({ initialInput }: { initialInput: string }) {
     const isApiKeyReady = useMemo(() => typeof openaiApiKey === 'string' && openaiApiKey.trim().length > 0, [openaiApiKey])
 
     const customFetch = async (_input: RequestInfo | URL, init?: RequestInit) => {
-        // TODO: 有个问题，首次创建时，不会传bearer token，导致401
-        logger.info('[ChatApp] API key present:', isApiKeyReady)
+        logger.info('[ChatApp] API key present:', isApiKeyReady, openaiApiKey)
         if (!isApiKeyReady) {
             return new Response('Missing API key', { status: 401, statusText: 'Unauthorized' })
         }
@@ -53,11 +52,13 @@ function Chat({ initialInput }: { initialInput: string }) {
         return result.toUIMessageStreamResponse();
     }
 
-    const { error, messages, sendMessage } = useChat({
+    const { error, messages, sendMessage, stop, status} = useChat({
         transport: new DefaultChatTransport({
             fetch: customFetch,
         }),
     })
+
+    const isGenerating = status === 'submitted' || status === 'streaming';
 
     return (
         <div className="flex flex-col h-full space-y-4 p-4 bg-white border shadow-xl dark:bg-gray-800">
@@ -97,6 +98,10 @@ function Chat({ initialInput }: { initialInput: string }) {
                     if (!isApiKeyReady) {
                         return
                     }
+                    if (isGenerating) {
+                        stop();
+                        return;
+                    }
                     sendMessage({ text: input });
                     setInput("");
                 }}
@@ -120,8 +125,14 @@ function Chat({ initialInput }: { initialInput: string }) {
                         size="icon"
                         className="shrink-0"
                         disabled={!isApiKeyReady}
+                        aria-label={isGenerating ? "Stop generating" : "Send message"}
+                        title={isGenerating ? "Stop" : "Send"}
                     >
-                        <Send className="h-4 w-4" />
+                        {isGenerating ? (
+                            <Square className="h-4 w-4" />
+                        ) : (
+                            <Send className="h-4 w-4" />
+                        )}
                     </Button>
                 </div>
             </form>
