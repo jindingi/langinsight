@@ -7,17 +7,18 @@ import { logger } from '@/utils/logger'
 export const CONFIG_STORAGE_KEY = 'config'
 
 export async function getConfig(): Promise<Config> {
-    const res = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY, DEFAULT_CONFIG_PROD)
+    const res = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY, null)
     if (!res) {
         throw new Error('Config not initialized')
     }
+    logger.info('[GetConfig] Config loaded from storage', res)
     return res
 }
 
 export async function initConfig() {
     const defaultConfig = await loadDefaultConfig()
 
-    const storedConfig = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY, defaultConfig)
+    const storedConfig = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY, null)
     if (storedConfig) {
         logger.info('Config loaded from storage', storedConfig)
     } else {
