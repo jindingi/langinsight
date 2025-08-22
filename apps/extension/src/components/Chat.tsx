@@ -12,7 +12,6 @@ import { Response as AIResponse } from "@/components/ai-elements/response";
 import { wordMeaningPrompt } from "@/prompts/word_meaning";
 
 function Chat({ initialInput }: { initialInput: string }) {
-    logger.log('[ChatApp] initialInput:', initialInput)
     const [input, setInput] = useState(initialInput);
     const openaiApiKey = useAtomValue(configFields.openaiApiKey)
     const isApiKeyReady = useMemo(() => typeof openaiApiKey === 'string' && openaiApiKey.trim().length > 0, [openaiApiKey])
@@ -29,7 +28,6 @@ function Chat({ initialInput }: { initialInput: string }) {
         logger.log('[ChatApp.customFetch] messages:', m.messages)
         const modelMessages: ModelMessage[] = convertToModelMessages(m.messages)
         const systemPrompt = wordMeaningPrompt
-        logger.log('[ChatApp.customFetch] systemPrompt:', systemPrompt)
         const result = streamText({
             model: deepseek("deepseek-chat"),
             system: systemPrompt,

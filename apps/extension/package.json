@@ -17,7 +17,7 @@
     "get-chrome-debugging-port": "python3 scripts/get_chrome_debugging_port.py",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
-    "precompile_template": "pnpm dlx handlebars src/prompts/*.handlebars -f /tmp/templates.precompiled.ts && echo \"import Handlebars from \\\"handlebars\\\";\" | cat - /tmp/templates.precompiled.ts > src/prompts/templates.precompiled.ts",
+    "precompile_template": "pnpm dlx handlebars src/prompts/*.handlebars -f /tmp/templates.precompiled.ts && echo \"// @ts-nocheck\nimport Handlebars from \\\"handlebars\\\";\" | cat - /tmp/templates.precompiled.ts > src/prompts/templates.precompiled.ts",
     "predev": "pnpm precompile_template",
     "prebuild": "pnpm precompile_template"
   },
