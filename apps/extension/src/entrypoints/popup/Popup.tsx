@@ -29,6 +29,10 @@ function Popup() {
     // Model setting handlers - much simpler with direct atom updates
     const handleProviderChange = (value: string) => {
         // Type-safe validation of provider value
+        if (!value) {
+            console.error('Empty model provider')
+            return
+        }
         const isValidProvider = MODLE_PROVIDERS.some(provider => provider === value)
         if (!isValidProvider) {
             console.error('Invalid model provider:', value)
@@ -43,7 +47,16 @@ function Popup() {
     }
 
     const handleModelChange = (value: string) => {
-        if (value === '') return
+        if (!value) {
+            console.error('Empty model name')
+            return
+        }
+        const provider = modelConfig.modelProvider
+        const isValidModel = MODEL_PROVIDER_SETTINGS[provider]?.models.some(model => model.id === value)
+        if (!isValidModel) {
+            console.error('Invalid model name:', value)
+            return
+        }
         setModelConfig({
             ...modelConfig,
             modelName: value,
@@ -51,6 +64,7 @@ function Popup() {
     }
 
     const handleBaseUrlChange = (value: string) => {
+        // Allow empty base URL as it's optional
         setModelConfig({
             ...modelConfig,
             baseUrl: value,
@@ -58,6 +72,16 @@ function Popup() {
     }
 
     const handleApiKeyChange = (value: string) => {
+        // API key can be empty during initial setup
+        // But we should warn about it
+        if (!value) {
+            console.warn('Empty API key')
+        }
+        // Basic API key format validation
+        // Most API keys are at least 32 characters long
+        if (value && value.length < 32) {
+            console.warn('API key seems too short')
+        }
         setModelConfig({
             ...modelConfig,
             apiKey: value,
@@ -67,9 +91,11 @@ function Popup() {
     // Language setting handlers - much simpler with direct atom updates
     const handleLanguageChange = (value: string) => {
         // Validate that the value is a valid Language enum value
-        const targetLanguage = Object.values(Language).includes(value as Language) 
-            ? value as Language 
-            : Language.English
+        if (!SUPPORTED_TARGET_LANGUAGES.includes(value as Language)) {
+            console.error('Invalid language:', value)
+            return
+        }
+        const targetLanguage = value as Language
         
         setLanguageConfig({
             ...languageConfig,

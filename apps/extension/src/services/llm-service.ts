@@ -7,10 +7,10 @@ import { convertToModelMessages, ModelMessage, streamText } from 'ai'
 import { logger } from '@/utils/logger'
 import { getWordMeaningPrompt } from '@/prompts/word_meaning'
 import { llmModelService } from '@/services/llm-model-service'
-import { Language } from '@/consts/language'
+import { getLanguageConfig } from '@/config/config-bridge'
 
 class LLMService {
-    getFetchFunction(targetLanguage: Language) {
+    getFetchFunction() {
         return async (_input: RequestInfo | URL, init?: RequestInit) => {
             const m = JSON.parse(init?.body as string)
             logger.log('[ChatApp.customFetch] messages:', m.messages)
@@ -19,7 +19,9 @@ class LLMService {
             )
 
             try {
-                const systemPrompt = getWordMeaningPrompt(targetLanguage)
+                // Get the latest language configuration from config-bridge
+                const languageConfig = await getLanguageConfig()
+                const systemPrompt = getWordMeaningPrompt(languageConfig.targetLanguage)
                 const model = await llmModelService.getModel()
                 const result = streamText({
                     model: model,

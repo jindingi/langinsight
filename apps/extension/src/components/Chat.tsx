@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Send, Square } from 'lucide-react'
-import { modelAtom, languageAtom } from '@/config/atoms'
+import { modelAtom } from '@/config/atoms'
 import { useAtomValue } from 'jotai'
 import { Response as AIResponse } from '@/components/ai-elements/response'
 import { llmService } from '@/services/llm-service'
@@ -14,16 +14,13 @@ import { extractMarkdownContent } from '@/utils/helper'
 function Chat({ initialInput }: { initialInput: string }) {
     const [input, setInput] = useState(initialInput)
     const modelConfig = useAtomValue(modelAtom)
-    const languageConfig = useAtomValue(languageAtom)
     const isApiKeyReady =
         typeof modelConfig.apiKey === 'string' &&
         modelConfig.apiKey.trim().length > 0
 
     const { error, messages, sendMessage, stop, status } = useChat({
         transport: new DefaultChatTransport({
-            fetch: llmService.getFetchFunction(
-                languageConfig.targetLanguage,
-            ),
+            fetch: llmService.getFetchFunction(),
         }),
     })
 
