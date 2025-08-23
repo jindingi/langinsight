@@ -10,7 +10,7 @@ import { llmModelService } from '@/services/llm-model-service'
 import { Language } from '@/consts/language'
 
 class LLMService {
-    getFetchFunction() {
+    getFetchFunction(targetLanguage: Language) {
         return async (_input: RequestInfo | URL, init?: RequestInit) => {
             const m = JSON.parse(init?.body as string)
             logger.log('[ChatApp.customFetch] messages:', m.messages)
@@ -19,7 +19,7 @@ class LLMService {
             )
 
             try {
-                const systemPrompt = getWordMeaningPrompt(Language.English)
+                const systemPrompt = getWordMeaningPrompt(targetLanguage)
                 const model = await llmModelService.getModel()
                 const result = streamText({
                     model: model,

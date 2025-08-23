@@ -1,10 +1,7 @@
-export const MODLE_PROVIDERS: string[] = [
+export const MODLE_PROVIDERS = [
     'openai',
     'deepseek',
-    'anthropic',
-    'google',
-    'azure',
-]
+] as const
 
 type ModelProviderSettings = {
     baseUrlDefault: string

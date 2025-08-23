@@ -2,15 +2,11 @@
 import { App } from '@/entrypoints/content/App'
 import ReactDOM from 'react-dom/client'
 import '@/assets/globals.css'
-import { initConfig } from '@/config/config'
-import { initConfigFields } from '@/config/atom'
 
 export default defineContentScript({
     matches: ['*://*/*'],
     cssInjectionMode: 'ui',
     async main(ctx) {
-        await initConfig()
-        await initConfigFields()
         const ui = await createShadowRootUi(ctx, {
             name: `langinsight-selection`,
             position: 'overlay',

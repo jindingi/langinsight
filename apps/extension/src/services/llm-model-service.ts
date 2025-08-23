@@ -1,5 +1,5 @@
 import { createDeepSeek } from '@ai-sdk/deepseek'
-import { getConfig } from '@/config/config'
+import { getModelConfig } from '@/config/config-bridge'
 
 class LLMModelService {
     private static instance: LLMModelService
@@ -14,8 +14,8 @@ class LLMModelService {
     }
 
     async getModel() {
-        const config = await getConfig()
-        const { modelProvider, apiKey, modelName } = config.model
+        const modelConfig = await getModelConfig()
+        const { modelProvider, apiKey, modelName } = modelConfig
         switch (modelProvider) {
             case 'deepseek':
                 return createDeepSeek({
@@ -23,7 +23,7 @@ class LLMModelService {
                 })(modelName)
             default:
                 throw new Error(
-                    `Unsupported model provider: ${config.model.modelProvider}`,
+                    `Unsupported model provider: ${modelProvider}`,
                 )
         }
     }

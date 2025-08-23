@@ -34,6 +34,7 @@ export class WXTStorageAdapter implements AsyncStorage<Config | null> {
         if (resultStr == null) {
             return initialValue
         }
+        logger.info(`Got item ${storageKey} ${resultStr}`)
         const result = configSchema.safeParse(JSON.parse(resultStr))
         if (result.error) {
             logger.error(`Error parsing item ${storageKey}`, result.error)

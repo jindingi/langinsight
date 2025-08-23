@@ -1,4 +1,4 @@
-import { getConfig } from '@/config/config'
+import { getModelConfig } from '@/config/config-bridge'
 import OpenAI from 'openai'
 import { logger } from '@/utils/logger'
 
@@ -34,9 +34,9 @@ class OpenAIManager {
      * 2. API key has changed
      */
     async getClient(): Promise<OpenAI> {
-        const cfg = await getConfig()
-        const apiKey = cfg?.openaiApiKey
-        logger.info('OpenAI API key', cfg, apiKey)
+        const modelConfig = await getModelConfig()
+        const apiKey = modelConfig.apiKey
+        logger.info('OpenAI API key', modelConfig, apiKey)
 
         if (!apiKey || apiKey.trim() === '') {
             throw new Error(
@@ -80,9 +80,9 @@ class OpenAIManager {
      * Check if a valid API key is set
      */
     async hasValidApiKey(): Promise<boolean> {
-        const cfg = await getConfig()
-        const apiKey = cfg?.openaiApiKey
-        return Boolean(apiKey)
+        const modelConfig = await getModelConfig()
+        const apiKey = modelConfig.apiKey
+        return Boolean(apiKey && apiKey.trim() !== '')
     }
 
     /**

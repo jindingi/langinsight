@@ -1,46 +1,31 @@
-import { wxtStorageAdapter } from '@/lib/storage'
 import { Config } from './type'
 import { DEFAULT_CONFIG_PROD } from './config.prod'
-import { logger } from '@/utils/logger'
 
-export const CONFIG_STORAGE_KEY = 'config'
-let DEFAULT_CONFIG: Config
+/**
+ * Legacy configuration utilities
+ * 
+ * Note: This file is kept for backward compatibility.
+ * New code should use the atom-based configuration system from '@/config/atoms'
+ */
 
-export async function getConfig(): Promise<Config> {
-    const res = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY, null)
-    if (!res) {
-        logger.warn('[GetConfig] No config in storage, using default config')
-        return DEFAULT_CONFIG
-    }
-    logger.info('[GetConfig] Config loaded from storage', res)
-    return res
-}
+// Storage keys - kept for reference
+export const MODEL_STORAGE_KEY = 'config_model'  // Used by modelAtom
+export const LANGUAGE_STORAGE_KEY = 'config_language'  // Used by languageAtom
 
-export async function initConfig() {
-    DEFAULT_CONFIG = await loadDefaultConfig()
+// Default configuration - still used by atoms for defaults
+export const DEFAULT_CONFIG: Config = await loadDefaultConfig()
 
-    const storedConfig = await wxtStorageAdapter.getItem(
-        CONFIG_STORAGE_KEY,
-        null,
-    )
-    if (storedConfig) {
-        logger.info('Config loaded from storage', storedConfig)
-    } else {
-        logger.info('No config in storage, using default config')
-        await wxtStorageAdapter.setItem(CONFIG_STORAGE_KEY, DEFAULT_CONFIG)
-        logger.info('Config saved to storage', DEFAULT_CONFIG)
-    }
-
-    logger.info('Config initialized', storedConfig, DEFAULT_CONFIG)
-}
-
-async function loadDefaultConfig(): Promise<Config> {
+/**
+ * Load default configuration based on environment
+ * Used internally by the atom system
+ */
+export async function loadDefaultConfig(): Promise<Config> {
     if (import.meta.env.DEV) {
         try {
             const devModule = await import('./config.dev')
             return devModule.DEFAULT_CONFIG_DEV
         } catch (error) {
-            logger.error('Error loading default config dev', error)
+            console.warn('Error loading dev config, using production defaults:', error)
             return DEFAULT_CONFIG_PROD
         }
     }

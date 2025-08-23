@@ -3,7 +3,6 @@ import { onMessage } from '@/utils/message'
 import { MESSAGE_TYPE_TRANSLATE_TEXT } from '@/consts/message'
 import { TextSelection, TranslateType, Resp } from '@/utils/types'
 import { llmService } from '@/services/llm-service'
-import { initConfig } from '@/config/config'
 
 const translationActionMap: Record<
     TranslateType,
@@ -53,8 +52,6 @@ async function mymemoryTranslateText(
 
 export default defineBackground(() => {
     logger.info('[background.index]')
-
-    initConfig()
 
     onMessage(MESSAGE_TYPE_TRANSLATE_TEXT, async message => {
         const { type: translateType, selection: selectedText } = message.data
