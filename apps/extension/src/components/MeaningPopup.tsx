@@ -1,13 +1,22 @@
-import React from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import React from 'react'
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@/components/ui/accordion'
 
 interface MeaningPopupProps {
-    selectedText: string;
-    position: { x: number; y: number };
-    onClose: () => void;
+    selectedText: string
+    position: { x: number; y: number }
+    onClose: () => void
 }
 
-export function MeaningPopup({ selectedText, position, onClose }: MeaningPopupProps) {
+export function MeaningPopup({
+    selectedText,
+    position,
+    onClose,
+}: MeaningPopupProps) {
     return (
         <div
             style={{
@@ -35,14 +44,20 @@ export function MeaningPopup({ selectedText, position, onClose }: MeaningPopupPr
             </div>
 
             {/* Content with Accordion */}
-            <Accordion type="multiple" defaultValue={["meaning", "example"]} className="w-full">
+            <Accordion
+                type="multiple"
+                defaultValue={['meaning', 'example']}
+                className="w-full"
+            >
                 <AccordionItem value="meaning">
                     <AccordionTrigger className="text-sm font-medium text-gray-700">
                         Meaning
                     </AccordionTrigger>
                     <AccordionContent>
                         <p className="text-gray-600 text-sm">
-                            This is a placeholder meaning for the selected text. In the future, this will be fetched from an API that provides definitions, translations, or explanations.
+                            This is a placeholder meaning for the selected text.
+                            In the future, this will be fetched from an API that
+                            provides definitions, translations, or explanations.
                         </p>
                     </AccordionContent>
                 </AccordionItem>
@@ -53,7 +68,8 @@ export function MeaningPopup({ selectedText, position, onClose }: MeaningPopupPr
                     </AccordionTrigger>
                     <AccordionContent>
                         <p className="text-gray-600 text-sm italic">
-                            "This word/phrase is commonly used in academic writing."
+                            "This word/phrase is commonly used in academic
+                            writing."
                         </p>
                     </AccordionContent>
                 </AccordionItem>
@@ -66,5 +82,5 @@ export function MeaningPopup({ selectedText, position, onClose }: MeaningPopupPr
                 </p>
             </div>
         </div>
-    );
-} 
+    )
+}

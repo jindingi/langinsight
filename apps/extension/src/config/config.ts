@@ -3,9 +3,8 @@ import { Config } from './type'
 import { DEFAULT_CONFIG_PROD } from './config.prod'
 import { logger } from '@/utils/logger'
 
-
 export const CONFIG_STORAGE_KEY = 'config'
-let DEFAULT_CONFIG: Config 
+let DEFAULT_CONFIG: Config
 
 export async function getConfig(): Promise<Config> {
     const res = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY, null)
@@ -20,7 +19,10 @@ export async function getConfig(): Promise<Config> {
 export async function initConfig() {
     DEFAULT_CONFIG = await loadDefaultConfig()
 
-    const storedConfig = await wxtStorageAdapter.getItem(CONFIG_STORAGE_KEY, null)
+    const storedConfig = await wxtStorageAdapter.getItem(
+        CONFIG_STORAGE_KEY,
+        null,
+    )
     if (storedConfig) {
         logger.info('Config loaded from storage', storedConfig)
     } else {

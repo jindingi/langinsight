@@ -1,11 +1,10 @@
-import { createDeepSeek } from "@ai-sdk/deepseek";
-import { getConfig } from "@/config/config";
+import { createDeepSeek } from '@ai-sdk/deepseek'
+import { getConfig } from '@/config/config'
 
 class LLMModelService {
     private static instance: LLMModelService
 
-    private constructor() {
-    }
+    private constructor() {}
 
     static getInstance(): LLMModelService {
         if (!LLMModelService.instance) {
@@ -23,9 +22,11 @@ class LLMModelService {
                     apiKey: apiKey,
                 })(modelName)
             default:
-                throw new Error(`Unsupported model provider: ${config.model.modelProvider}`)
+                throw new Error(
+                    `Unsupported model provider: ${config.model.modelProvider}`,
+                )
         }
     }
 }
 
-export const llmModelService = LLMModelService.getInstance();
+export const llmModelService = LLMModelService.getInstance()

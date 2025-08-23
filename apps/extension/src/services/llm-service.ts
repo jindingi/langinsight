@@ -1,47 +1,48 @@
-import { getOpenAIClient } from "@/lib/llm/openai"
-import { SELECTED_TEXT_MARKER, SELECTED_TEXT_MARKER_END } from "@/consts/selection"
-import { convertToModelMessages, ModelMessage, streamText } from "ai";
-import { logger } from "@/utils/logger";
-import { wordMeaningPrompt } from "@/prompts/word_meaning";
-import { llmModelService } from "@/services/llm-model-service"
+import { getOpenAIClient } from '@/lib/llm/openai'
+import {
+    SELECTED_TEXT_MARKER,
+    SELECTED_TEXT_MARKER_END,
+} from '@/consts/selection'
+import { convertToModelMessages, ModelMessage, streamText } from 'ai'
+import { logger } from '@/utils/logger'
+import { getWordMeaningPrompt } from '@/prompts/word_meaning'
+import { llmModelService } from '@/services/llm-model-service'
+import { Language } from '@/consts/language'
 
 class LLMService {
-    private static instance: LLMService
-
-    private constructor() {
-    }
-
-    static getInstance(): LLMService {
-        if (!LLMService.instance) {
-            LLMService.instance = new LLMService()
-        }
-        return LLMService.instance
-    }
-    
     getFetchFunction() {
         return async (_input: RequestInfo | URL, init?: RequestInit) => {
-            const m = JSON.parse(init?.body as string);
+            const m = JSON.parse(init?.body as string)
             logger.log('[ChatApp.customFetch] messages:', m.messages)
-            const modelMessages: ModelMessage[] = convertToModelMessages(m.messages)
-            const systemPrompt = wordMeaningPrompt
-            
+            const modelMessages: ModelMessage[] = convertToModelMessages(
+                m.messages,
+            )
+
             try {
+                const systemPrompt = getWordMeaningPrompt(Language.English)
                 const model = await llmModelService.getModel()
                 const result = streamText({
                     model: model,
                     system: systemPrompt,
                     messages: modelMessages,
                     abortSignal: init?.signal as AbortSignal | undefined,
-                });
-                return result.toUIMessageStreamResponse();
+                })
+                return result.toUIMessageStreamResponse()
             } catch (error) {
                 logger.error('[ChatApp.customFetch] error:', error)
-                return new Response('Error calling LLM', { status: 500, statusText: 'Internal Server Error' })
+                return new Response('Error calling LLM', {
+                    status: 500,
+                    statusText: 'Internal Server Error',
+                })
             }
         }
     }
 
-    async translateText(text: string, from: string, to: string): Promise<string> {
+    async translateText(
+        text: string,
+        from: string,
+        to: string,
+    ): Promise<string> {
         if (!text || !from || !to) {
             throw new Error('Invalid parameters')
         }
@@ -55,17 +56,20 @@ class LLMService {
             model: 'deepseek-chat',
             messages: [
                 { role: 'system', content: systemPrompt },
-                { role: 'user', content: text }
+                { role: 'user', content: text },
             ],
         })
         return response.choices?.[0]?.message?.content || ''
     }
-    
+
     async selectedTextMeaning(text: string): Promise<string> {
         if (!text) {
             throw new Error('Invalid parameters')
         }
-        if (!text.includes(SELECTED_TEXT_MARKER) || !text.includes(SELECTED_TEXT_MARKER_END)) {
+        if (
+            !text.includes(SELECTED_TEXT_MARKER) ||
+            !text.includes(SELECTED_TEXT_MARKER_END)
+        ) {
             throw new Error('Invalid parameters, no selected text found')
         }
         const client = await getOpenAIClient()
@@ -85,12 +89,11 @@ class LLMService {
             model: 'deepseek-chat',
             messages: [
                 { role: 'system', content: systemPrompt },
-                { role: 'user', content: text }
+                { role: 'user', content: text },
             ],
         })
         return response.choices?.[0]?.message?.content || ''
     }
-
 }
 
-export const llmService = LLMService.getInstance()
+export const llmService = new LLMService()

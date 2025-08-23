@@ -1,20 +1,28 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useRef, useCallback } from 'react'
-import { isTranslationIconVisibleAtom, selectionContentAtom, translationIconPositionAtom } from '@/entrypoints/content/atom'
+import {
+    isTranslationIconVisibleAtom,
+    selectionContentAtom,
+    translationIconPositionAtom,
+} from '@/entrypoints/content/atom'
 import { textSelectionService } from '@/services/text-selection-service'
 import type { TextSelection } from '@/utils/types'
 import Chat from '@/components/Chat'
 
 const CONTEXT_OPTIONS = {
     beforeSentences: 2,
-    afterSentences: 1
+    afterSentences: 1,
 }
 
 export function Selection() {
     const iconContainerRef = useRef<HTMLDivElement>(null)
-    const [isTranslationIconVisible, setIsTranslationIconVisible] = useAtom(isTranslationIconVisibleAtom)
+    const [isTranslationIconVisible, setIsTranslationIconVisible] = useAtom(
+        isTranslationIconVisibleAtom,
+    )
     const setSelectionContent = useSetAtom(selectionContentAtom)
-    const [translationIconPosition, setTranslationIconPosition] = useAtom(translationIconPositionAtom)
+    const [translationIconPosition, setTranslationIconPosition] = useAtom(
+        translationIconPositionAtom,
+    )
     const selectionContent = useAtomValue(selectionContentAtom)
 
     const handleMouseUp = useCallback((event: MouseEvent) => {
@@ -36,16 +44,17 @@ export function Selection() {
         const range = selection.getRangeAt(0)
         const rect = range.getBoundingClientRect()
 
-        const selected: TextSelection | null = textSelectionService.getSelectedTextWithContext(selection, {
-            beforeSentences: CONTEXT_OPTIONS.beforeSentences,
-            afterSentences: CONTEXT_OPTIONS.afterSentences
-        })
+        const selected: TextSelection | null =
+            textSelectionService.getSelectedTextWithContext(selection, {
+                beforeSentences: CONTEXT_OPTIONS.beforeSentences,
+                afterSentences: CONTEXT_OPTIONS.afterSentences,
+            })
         if (selected && selected.text.length > 0 && rect.x && rect.y) {
             setSelectionContent(selected)
             setIsTranslationIconVisible(true)
             const position = {
                 x: rect.right + window.scrollX,
-                y: rect.bottom + window.scrollY + 5
+                y: rect.bottom + window.scrollY + 5,
             }
             setTranslationIconPosition(position)
             // logger.log('[SelectionIcon.handleMouseUp] translationIconPosition:', position)
@@ -75,7 +84,6 @@ export function Selection() {
         }
     }, [])
 
-
     return (
         <div ref={iconContainerRef}>
             {isTranslationIconVisible && (
@@ -88,8 +96,8 @@ export function Selection() {
                     }}
                 >
                     <div className="w-[400px] h-[500px] bg-background border rounded-lg shadow-lg overflow-hidden">
-                        { selectionContent && selectionContent.context && (
-                                <Chat initialInput={selectionContent.context} />
+                        {selectionContent && selectionContent.context && (
+                            <Chat initialInput={selectionContent.context} />
                         )}
                     </div>
                 </div>

@@ -1,9 +1,9 @@
 // import { ContentController } from '@/entrypoints/content/controller';
-import { App } from '@/entrypoints/content/App';
-import ReactDOM from 'react-dom/client';
-import '@/assets/globals.css';
-import { initConfig } from '@/config/config';
-import { initConfigFields } from '@/config/atom';
+import { App } from '@/entrypoints/content/App'
+import ReactDOM from 'react-dom/client'
+import '@/assets/globals.css'
+import { initConfig } from '@/config/config'
+import { initConfigFields } from '@/config/atom'
 
 export default defineContentScript({
     matches: ['*://*/*'],
@@ -15,7 +15,7 @@ export default defineContentScript({
             name: `langinsight-selection`,
             position: 'overlay',
             anchor: 'body',
-            onMount: (container) => {
+            onMount: container => {
                 // const controller = new ContentController(shadow);
                 // controller.setupEventListeners();
 
@@ -28,7 +28,7 @@ export default defineContentScript({
                 root.render(<App />)
                 return root
             },
-            onRemove: (root) => {
+            onRemove: root => {
                 // Unmount the root when the UI is removed
                 root?.unmount()
             },
@@ -36,6 +36,6 @@ export default defineContentScript({
 
         // 4. Mount the UI
         ui.mount()
-        console.log('Content script loaded');
+        console.log('Content script loaded')
     },
-});
+})

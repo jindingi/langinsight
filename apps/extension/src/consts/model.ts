@@ -1,4 +1,10 @@
-export const MODLE_PROVIDERS: string[] = ['openai', 'deepseek', 'anthropic', 'google', 'azure']
+export const MODLE_PROVIDERS: string[] = [
+    'openai',
+    'deepseek',
+    'anthropic',
+    'google',
+    'azure',
+]
 
 type ModelProviderSettings = {
     baseUrlDefault: string
@@ -17,8 +23,8 @@ export const MODEL_PROVIDER_SETTINGS: Record<string, ModelProviderSettings> = {
             {
                 id: 'gpt-4o',
                 name: 'GPT-4o',
-            }
-        ]
+            },
+        ],
     },
     deepseek: {
         baseUrlDefault: 'https://api.deepseek.com/v1',
@@ -31,7 +37,7 @@ export const MODEL_PROVIDER_SETTINGS: Record<string, ModelProviderSettings> = {
             {
                 id: 'deepseek-reasoner',
                 name: 'DeepSeek Reasoner',
-            }
-        ]
-    }
+            },
+        ],
+    },
 }

@@ -1,11 +1,11 @@
 export interface TextSelection {
-    text: string;
-    context: string;
+    text: string
+    context: string
 }
 
 export interface ContextOptions {
-    beforeSentences?: number;
-    afterSentences?: number;
+    beforeSentences?: number
+    afterSentences?: number
 }
 
 export enum TranslateType {
@@ -14,12 +14,12 @@ export enum TranslateType {
 }
 
 export interface TranslateRequest {
-    type: TranslateType;
-    selection: TextSelection;
+    type: TranslateType
+    selection: TextSelection
 }
 
 export interface Resp<T> {
-    code: number;
-    data: T;
-    error?: string;
+    code: number
+    data: T
+    error?: string
 }

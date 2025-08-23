@@ -1,21 +1,20 @@
-
 {
-  "extends": ["//"],
-  "tasks": {
-    "build": {
-      "inputs": ["$TURBO_DEFAULT$", ".env*", "!coverage/**"],
-      "outputs": [".output/**", ".wxt/**"]
-    },
-    "zip": {
-      "outputs": [".output/**"]
-    },
-    "test:cov": {
-      "dependsOn": ["^build"],
-      "outputs": ["coverage/**"]
-    },
-    "test:watch": {
-      "cache": false,
-      "persistent": true
+    "extends": ["//"],
+    "tasks": {
+        "build": {
+            "inputs": ["$TURBO_DEFAULT$", ".env*", "!coverage/**"],
+            "outputs": [".output/**", ".wxt/**"]
+        },
+        "zip": {
+            "outputs": [".output/**"]
+        },
+        "test:cov": {
+            "dependsOn": ["^build"],
+            "outputs": ["coverage/**"]
+        },
+        "test:watch": {
+            "cache": false,
+            "persistent": true
+        }
     }
-  }
 }

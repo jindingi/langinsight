@@ -6,15 +6,15 @@
     "configurations": [
         {
             "name": "Attach to Chrome",
-            "port": 57523, //update with the value given by 'pnpm: get-chrome-debugging-port' task
+            "port": 51234, //update with the value given by 'pnpm: get-chrome-debugging-port' task
             "request": "attach",
             "type": "chrome",
-            "webRoot": "${workspaceFolder}/src",
+            "webRoot": "${workspaceFolder}/apps/extension/src",
             "sourceMaps": true,
             "sourceMapPathOverrides": {
                 "../../../src/*": "${webRoot}/*",
-                "../../src/*": "${webRoot}/*",
+                "../../src/*": "${webRoot}/*"
             }
-        },
+        }
     ]
 }
