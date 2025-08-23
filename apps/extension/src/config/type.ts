@@ -1,6 +1,7 @@
+import { MODLE_PROVIDERS } from '@/consts/model'
 import { z } from 'zod'
 
-export const modelProviderSchema = z.enum(['openai', 'deepseek', 'anthropic', 'google', 'azure']).default('openai')
+export const modelProviderSchema = z.enum(MODLE_PROVIDERS).default('openai')
 
 export const modelSchema = z.object({
     modelProvider: modelProviderSchema,

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
+import Popup from './Popup.tsx';
 import '@/assets/globals.css';
 import { initConfig } from '@/config/config.ts';
 import { initConfigFields } from '@/config/atom.ts';
@@ -12,7 +12,7 @@ async function initApp() {
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <App />
+        <Popup />
     </React.StrictMode>,
   );
 }
