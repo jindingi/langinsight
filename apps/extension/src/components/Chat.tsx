@@ -1,62 +1,45 @@
-import { createDeepSeek } from "@ai-sdk/deepseek";
 import { useChat } from "@ai-sdk/react";
-import { convertToModelMessages, DefaultChatTransport, ModelMessage, streamText } from "ai";
+import { DefaultChatTransport } from "ai";
 import { useMemo, useState } from "react";
-import { logger } from "@/utils/logger";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Send, Square } from "lucide-react";
 import { configFields } from "@/config/atom";
 import { useAtomValue } from "jotai";
 import { Response as AIResponse } from "@/components/ai-elements/response";
-import { wordMeaningPrompt } from "@/prompts/word_meaning";
+import { llmService } from "@/services/llm-service";
+import { extractMarkdownContent } from "@/utils/helper";
 
 function Chat({ initialInput }: { initialInput: string }) {
     const [input, setInput] = useState(initialInput);
-    const openaiApiKey = useAtomValue(configFields.openaiApiKey)
-    const isApiKeyReady = useMemo(() => typeof openaiApiKey === 'string' && openaiApiKey.trim().length > 0, [openaiApiKey])
-
-    const customFetch = async (_input: RequestInfo | URL, init?: RequestInit) => {
-        logger.info('[ChatApp] API key present:', isApiKeyReady, openaiApiKey)
-        if (!isApiKeyReady) {
-            return new Response('Missing API key', { status: 401, statusText: 'Unauthorized' })
-        }
-        const deepseek = createDeepSeek({
-            apiKey: openaiApiKey || '',
-        })
-        const m = JSON.parse(init?.body as string);
-        logger.log('[ChatApp.customFetch] messages:', m.messages)
-        const modelMessages: ModelMessage[] = convertToModelMessages(m.messages)
-        const systemPrompt = wordMeaningPrompt
-        const result = streamText({
-            model: deepseek("deepseek-chat"),
-            system: systemPrompt,
-            messages: modelMessages,
-            abortSignal: init?.signal as AbortSignal | undefined,
-        });
-        return result.toUIMessageStreamResponse();
-    }
+    const modelConfig = useAtomValue(configFields.model)
+    const isApiKeyReady = useMemo(
+        () => modelConfig
+            && typeof modelConfig.apiKey === 'string'
+            && modelConfig.apiKey.trim().length > 0,
+        [modelConfig?.apiKey]
+    )
 
     const { error, messages, sendMessage, stop, status } = useChat({
         transport: new DefaultChatTransport({
-            fetch: customFetch,
+            fetch: llmService.getFetchFunction(),
         }),
     })
 
     const isGenerating = status === 'submitted' || status === 'streaming';
 
     return (
-        <div className="flex flex-col h-full space-y-4 p-4 bg-white border shadow-xl dark:bg-gray-800">
-            <div className="flex-1 overflow-y-auto space-y-4">
+        <div className="flex flex-col h-full space-y-4 p-4 bg-gradient-to-b from-gray-50 to-white border shadow-xl dark:from-gray-900 dark:to-gray-800">
+            <div className="flex-1 overflow-y-auto space-y-3">
                 {messages.map((message) => (
                     <div
                         key={message.id}
                         className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                     >
                         <div
-                            className={`max-w-[80%] rounded-lg p-3 ${message.role === "user"
-                                ? "bg-blue-500 text-white"
-                                : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                            className={`max-w-[80%] rounded-2xl px-4 py-3 shadow-sm ${message.role === "user"
+                                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-blue-200 dark:shadow-blue-900/30"
+                                : "bg-white text-gray-700 border border-gray-200 shadow-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:shadow-gray-800"
                                 }`}
                         >
                             {message.parts.map((part, i) => {
@@ -65,7 +48,7 @@ function Chat({ initialInput }: { initialInput: string }) {
                                         return (
                                             message.role !== "user" ?
                                                 <AIResponse key={`${message.id}-${i}`}>
-                                                    {part.text}
+                                                    {extractMarkdownContent(part.text)}
                                                 </AIResponse>
                                                 :
                                                 <div
@@ -103,25 +86,24 @@ function Chat({ initialInput }: { initialInput: string }) {
                     </div>
                 )}
                 <div className="flex gap-2">
-                    <Input
+                    <Textarea
                         value={input}
-                        placeholder={isApiKeyReady ? "Say something..." : (openaiApiKey == null ? "Loading config…" : "Please set your API key in settings")}
+                        placeholder={isApiKeyReady ? "Say something..." : ("Please set your API key in settings")}
                         onChange={(e) => setInput(e.currentTarget.value)}
                         className="flex-1 bg-gray-50 text-gray-900 dark:bg-gray-700 dark:text-gray-100 dark:placeholder:text-gray-400"
                         disabled={!isApiKeyReady}
                     />
                     <Button
                         type="submit"
-                        size="icon"
-                        className="shrink-0"
+                        className="self-end shrink-0"
                         disabled={!isApiKeyReady}
                         aria-label={isGenerating ? "Stop generating" : "Send message"}
                         title={isGenerating ? "Stop" : "Send"}
                     >
                         {isGenerating ? (
-                            <Square className="h-4 w-4" />
+                            <Square className="size-6" />
                         ) : (
-                            <Send className="h-4 w-4" />
+                            <Send className="size-6" />
                         )}
                     </Button>
                 </div>

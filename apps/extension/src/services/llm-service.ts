@@ -1,5 +1,9 @@
 import { getOpenAIClient } from "@/lib/llm/openai"
 import { SELECTED_TEXT_MARKER, SELECTED_TEXT_MARKER_END } from "@/consts/selection"
+import { convertToModelMessages, ModelMessage, streamText } from "ai";
+import { logger } from "@/utils/logger";
+import { wordMeaningPrompt } from "@/prompts/word_meaning";
+import { llmModelService } from "@/services/llm-model-service"
 
 class LLMService {
     private static instance: LLMService
@@ -12,6 +16,29 @@ class LLMService {
             LLMService.instance = new LLMService()
         }
         return LLMService.instance
+    }
+    
+    getFetchFunction() {
+        return async (_input: RequestInfo | URL, init?: RequestInit) => {
+            const m = JSON.parse(init?.body as string);
+            logger.log('[ChatApp.customFetch] messages:', m.messages)
+            const modelMessages: ModelMessage[] = convertToModelMessages(m.messages)
+            const systemPrompt = wordMeaningPrompt
+            
+            try {
+                const model = await llmModelService.getModel()
+                const result = streamText({
+                    model: model,
+                    system: systemPrompt,
+                    messages: modelMessages,
+                    abortSignal: init?.signal as AbortSignal | undefined,
+                });
+                return result.toUIMessageStreamResponse();
+            } catch (error) {
+                logger.error('[ChatApp.customFetch] error:', error)
+                return new Response('Error calling LLM', { status: 500, statusText: 'Internal Server Error' })
+            }
+        }
     }
 
     async translateText(text: string, from: string, to: string): Promise<string> {

@@ -1,6 +1,8 @@
 {
   "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
+    "esModuleInterop": true, // wink-nlp
+    "allowSyntheticDefaultImports": true, // wink-nlp
     "allowImportingTsExtensions": true,
     "jsx": "react-jsx"
   }

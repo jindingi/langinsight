@@ -1,6 +1,5 @@
 import { defineConfig, WxtViteConfig } from 'wxt';
 import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
 import toUtf8 from './scripts/vite_plugin_to_utf8'
 
 // See https://wxt.dev/api/config.html
@@ -11,7 +10,6 @@ export default defineConfig({
     return {
       plugins: [
         toUtf8(),
-        react(),
         tailwindcss(),
       ],
     } as WxtViteConfig

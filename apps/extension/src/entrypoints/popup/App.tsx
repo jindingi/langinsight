@@ -5,7 +5,7 @@ import { PasswordInput } from '@/components/PasswordInput'
 import { configFields } from '@/config/atom'
 
 function App() {
-  const [apiKey, setApiKey] = useAtom(configFields.openaiApiKey)
+  const [modelConfig, setModelConfig] = useAtom(configFields.model)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -18,8 +18,8 @@ function App() {
           <Label htmlFor="apiKey">OpenAI API Key</Label>
           <PasswordInput
             id="apiKey"
-            value={apiKey || ''}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApiKey(e.target.value)}
+            value={modelConfig?.apiKey || ''}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setModelConfig({...modelConfig, apiKey: e.target.value})}
             placeholder="Enter your API key"
             className="font-mono"
           />

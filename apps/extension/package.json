@@ -14,7 +14,6 @@
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare",
     "test": "vitest run",
-    "get-chrome-debugging-port": "python3 scripts/get_chrome_debugging_port.py",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "precompile_template": "pnpm dlx handlebars src/prompts/*.handlebars -f /tmp/templates.precompiled.ts && echo \"// @ts-nocheck\nimport Handlebars from \\\"handlebars\\\";\" | cat - /tmp/templates.precompiled.ts > src/prompts/templates.precompiled.ts",
@@ -52,6 +51,7 @@
     "streamdown": "^1.0.11",
     "tailwind-merge": "^3.3.1",
     "use-stick-to-bottom": "^1.1.1",
+    "wink-nlp": "^2.4.0",
     "zod": "^4.0.17"
   },
   "devDependencies": {

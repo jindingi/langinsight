@@ -1,0 +1,6 @@
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.semi": false,
+    "files.autoSave": "onFocusChange",
+    "editor.fontSize": 14
+}

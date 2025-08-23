@@ -1,7 +1,6 @@
 module.exports = {
-  semi: true,
+  semi: false,
   singleQuote: true,
-  trailingComma: 'es5',
   printWidth: 80,
   tabWidth: 2,
   useTabs: false,
@@ -9,5 +8,5 @@ module.exports = {
   bracketSameLine: false,
   arrowParens: 'avoid',
   endOfLine: 'lf',
-  plugins: ['prettier-plugin-tailwindcss'], // 自动排序 Tailwind CSS 类名
+  // plugins: [import('prettier-plugin-tailwindcss')], // 自动排序 Tailwind CSS 类名
 };
