@@ -1,6 +1,6 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Send, Square } from "lucide-react";
@@ -13,12 +13,9 @@ import { extractMarkdownContent } from "@/utils/helper";
 function Chat({ initialInput }: { initialInput: string }) {
     const [input, setInput] = useState(initialInput);
     const modelConfig = useAtomValue(configFields.model)
-    const isApiKeyReady = useMemo(
-        () => modelConfig
-            && typeof modelConfig.apiKey === 'string'
-            && modelConfig.apiKey.trim().length > 0,
-        [modelConfig?.apiKey]
-    )
+    const isApiKeyReady = modelConfig
+        && typeof modelConfig.apiKey === 'string'
+        && modelConfig.apiKey.trim().length > 0
 
     const { error, messages, sendMessage, stop, status } = useChat({
         transport: new DefaultChatTransport({

@@ -5,10 +5,13 @@ import { PasswordInput } from '@/components/PasswordInput'
 import { configFields } from '@/config/atom'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { MODLE_PROVIDERS, MODEL_PROVIDER_MODELS } from '@/consts/model'
+import { MODLE_PROVIDERS, MODEL_PROVIDER_SETTINGS } from '@/consts/model'
 
 function Popup() {
   const [modelConfig, setModelConfig] = useAtom(configFields.model)
+  
+  const provider = modelConfig?.modelProvider || 'openai'
+  const model = modelConfig?.modelName || MODEL_PROVIDER_SETTINGS[provider]?.models[0]?.id || ''
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -18,11 +21,13 @@ function Popup() {
     setModelConfig({
       ...modelConfig,
       modelProvider: value,
-      modelName: MODEL_PROVIDER_MODELS[value]?.models[0]?.id || ''
+      modelName: MODEL_PROVIDER_SETTINGS[value]?.models[0]?.id || ''
     })
   }
 
   const handleModelChange = (value: string) => {
+    if (value === '') return
+
     setModelConfig({
       ...modelConfig,
       modelName: value
@@ -36,7 +41,7 @@ function Popup() {
 
           <Label htmlFor="modelProvider">Model Provider</Label>
           <Select
-            value={modelConfig?.modelProvider || 'openai'}
+            value={provider}
             onValueChange={handleProviderChange}
           >
             <SelectTrigger>
@@ -55,14 +60,14 @@ function Popup() {
         <div className="space-y-2">
           <Label htmlFor="modelName">Model</Label>
           <Select
-            value={modelConfig?.modelName || ''}
+            value={model}
             onValueChange={handleModelChange}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select a model" />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-gray-800 z-50">
-              {MODEL_PROVIDER_MODELS[modelConfig?.modelProvider || 'openai']?.models.map((model) => (
+              {MODEL_PROVIDER_SETTINGS[provider]?.models.map((model) => (
                 <SelectItem key={model.id} value={model.id}>
                   {model.name}
                 </SelectItem>
@@ -71,17 +76,19 @@ function Popup() {
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="baseUrl">Base URL</Label>
-          <Input
-            id="baseUrl"
-            type="url"
-            value={modelConfig?.baseUrl || ''}
-            onChange={(e) => setModelConfig({...modelConfig, baseUrl: e.target.value})}
-            placeholder="https://api.example.com"
-            className="font-mono"
-          />
-        </div>
+        {MODEL_PROVIDER_SETTINGS[provider]?.enableCustomBaseUrl && (
+          <div className="space-y-2">
+            <Label htmlFor="baseUrl">Base URL</Label>
+            <Input
+              id="baseUrl"
+              type="url"
+              value={modelConfig?.baseUrl || ''}
+              onChange={(e) => setModelConfig({...modelConfig, baseUrl: e.target.value})}
+              placeholder={MODEL_PROVIDER_SETTINGS[provider]?.baseUrlDefault}
+              className="font-mono"
+            />
+          </div>
+        )}
 
         <div className="space-y-2">
           <Label htmlFor="apiKey">API Key</Label>
