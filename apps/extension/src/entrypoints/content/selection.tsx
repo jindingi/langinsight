@@ -4,10 +4,10 @@ import {
     isTranslationIconVisibleAtom,
     selectionContentAtom,
     translationIconPositionAtom,
+    isTranslationCardVisibleAtom,
 } from '@/entrypoints/content/atom'
 import { textSelectionService } from '@/services/text-selection-service'
 import type { TextSelection } from '@/utils/types'
-import Chat from '@/components/Chat'
 
 const CONTEXT_OPTIONS = {
     beforeSentences: 2,
@@ -19,12 +19,14 @@ export function Selection() {
     const [isTranslationIconVisible, setIsTranslationIconVisible] = useAtom(
         isTranslationIconVisibleAtom,
     )
+    const [isTranslationCardVisible, setIsTranslationCardVisible] = useAtom(
+        isTranslationCardVisibleAtom,
+    )
     const setSelectionContent = useSetAtom(selectionContentAtom)
     const [translationIconPosition, setTranslationIconPosition] = useAtom(
         translationIconPositionAtom,
     )
     const selectionContent = useAtomValue(selectionContentAtom)
-
     const handleMouseUp = useCallback((event: MouseEvent) => {
         if (iconContainerRef.current) {
             const eventPath = event.composedPath()
@@ -71,6 +73,7 @@ export function Selection() {
             const insideIcon = eventPath.includes(iconContainerRef.current)
             if (!insideIcon) {
                 setIsTranslationIconVisible(false)
+                setIsTranslationCardVisible(false)
             }
         }
     }, [])
@@ -87,7 +90,6 @@ export function Selection() {
     return (
         <div ref={iconContainerRef}>
             {isTranslationIconVisible && (
-                // TODO: 把icon加回来
                 <div
                     className="absolute z-[2147483647] flex"
                     style={{
@@ -95,11 +97,25 @@ export function Selection() {
                         top: `${translationIconPosition?.y}px`,
                     }}
                 >
-                    <div className="w-[400px] h-[500px] bg-background border rounded-lg shadow-lg overflow-hidden">
+                    <div className="bg-background border rounded-lg shadow-lg overflow-hidden">
                         {selectionContent && selectionContent.context && (
-                            <Chat initialInput={selectionContent.context} />
+                            <TranslationButton />
                         )}
+                        {/* {selectionContent && selectionContent.context && (
+                            <Chat initialInput={selectionContent.context} />
+                        )} */}
                     </div>
+                </div>
+            )}
+            {isTranslationCardVisible && (
+                <div
+                    className="absolute z-[2147483647] flex"
+                    style={{
+                        left: `${translationIconPosition?.x}px`,
+                        top: `${translationIconPosition?.y}px`,
+                    }}
+                >
+                    <TranslationCard />
                 </div>
             )}
         </div>

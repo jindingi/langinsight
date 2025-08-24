@@ -2,6 +2,8 @@
 import { App } from '@/entrypoints/content/App'
 import ReactDOM from 'react-dom/client'
 import '@/assets/globals.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { StrictMode } from 'react'
 
 export default defineContentScript({
     matches: ['*://*/*'],
@@ -14,6 +16,7 @@ export default defineContentScript({
             onMount: container => {
                 // const controller = new ContentController(shadow);
                 // controller.setupEventListeners();
+                const queryClient = new QueryClient()
 
                 const wrapper = document.createElement('div')
                 // wrapper.className =
@@ -21,7 +24,13 @@ export default defineContentScript({
                 container.appendChild(wrapper)
                 // Create a root on the UI container and render a component
                 const root = ReactDOM.createRoot(wrapper)
-                root.render(<App />)
+                root.render(
+                    <StrictMode>
+                        <QueryClientProvider client={queryClient}>
+                            <App />
+                        </QueryClientProvider>
+                    </StrictMode>,
+                )
                 return root
             },
             onRemove: root => {

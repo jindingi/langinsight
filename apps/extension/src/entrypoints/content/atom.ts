@@ -8,3 +8,4 @@ export const translationIconPositionAtom = atom<{
     x: number
     y: number
 } | null>(null)
+export const isTranslationCardVisibleAtom = atom<boolean>(false)
