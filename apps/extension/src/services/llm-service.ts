@@ -10,6 +10,21 @@ import { llmModelService } from '@/services/llm-model-service'
 import { getLanguageConfig } from '@/config/config-bridge'
 
 class LLMService {
+    async streamText(
+        messages: ModelMessage[],
+        abortSignal: AbortSignal | null,
+    ) {
+        const languageConfig = await getLanguageConfig()
+        const systemPrompt = getWordMeaningPrompt(languageConfig.targetLanguage)
+        const model = await llmModelService.getModel()
+        const result = streamText({
+            model: model,
+            system: systemPrompt,
+            messages: messages,
+            abortSignal: abortSignal || undefined,
+        })
+        return result
+    }
     getFetchFunction() {
         return async (_input: RequestInfo | URL, init?: RequestInit) => {
             const m = JSON.parse(init?.body as string)
@@ -19,16 +34,10 @@ class LLMService {
             )
 
             try {
-                // Get the latest language configuration from config-bridge
-                const languageConfig = await getLanguageConfig()
-                const systemPrompt = getWordMeaningPrompt(languageConfig.targetLanguage)
-                const model = await llmModelService.getModel()
-                const result = streamText({
-                    model: model,
-                    system: systemPrompt,
-                    messages: modelMessages,
-                    abortSignal: init?.signal as AbortSignal | undefined,
-                })
+                const result = await this.streamText(
+                    modelMessages,
+                    init?.signal || null,
+                )
                 return result.toUIMessageStreamResponse()
             } catch (error) {
                 logger.error('[ChatApp.customFetch] error:', error)

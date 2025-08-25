@@ -1,53 +1,68 @@
-import { useAtomValue } from 'jotai'
-import { selectionContentAtom } from '@/entrypoints/content/atom'
-import { useQuery } from '@tanstack/react-query'
+import { useEffect, useRef } from 'react'
+import { useChat } from '@ai-sdk/react'
+import { DefaultChatTransport } from 'ai'
+import { llmService } from '@/services/llm-service'
 import { logger } from '@/utils/logger'
+import {Streamdown} from 'streamdown'
 
-export function TranslationCard() {
-    const selectionContent = useAtomValue(selectionContentAtom)
-    
-    const translationQueryFn = async () => {
-        logger.log('[TranslationCard.translationQueryFn] selectionContent:', selectionContent)
-        if (!selectionContent) {
-            return ''
-        }
-        const response = await fetch(
-            `https://api.mymemory.translated.net/get?q=${selectionContent?.text}&langpair=en|zh-CN`,
-        )
-        logger.log('[TranslationCard.translationQueryFn] response:', response)
-        const data = await response.json()
-        return data.responseData.translatedText
-    }
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['translation', selectionContent],
-        queryFn: translationQueryFn,
+interface TranslationCardProps {
+    initialInput: string
+}
+
+export function TranslationCard({initialInput}: TranslationCardProps) {
+    const hasSentRef = useRef(false)
+    const { error, messages, sendMessage, status } = useChat({
+        transport: new DefaultChatTransport({
+            fetch: llmService.getFetchFunction(),
+        }),
     })
 
+    // Trigger translation only once per unique input (防止React dev模式双重渲染导致重复调用)
+    useEffect(() => {
+        if (initialInput && !hasSentRef.current) {
+            logger.info('[TranslationCard.useEffect] Sending message:', initialInput)
+            hasSentRef.current = true
+            sendMessage({
+                text: initialInput,
+            })
+        }
+    }, [initialInput, sendMessage])
+    
+
+
+    // Get the latest assistant message for translation display
+    const latestAssistantMessage = messages.filter(message => message.role === 'assistant').at(-1)
+
     return (
-        <div className="bg-white rounded-lg border border-gray-200 shadow-lg p-4 min-w-[200px] max-w-[400px]">
-            <div className="space-y-2">
-                {selectionContent?.text && (
-                    <div className="text-sm text-gray-600 border-b pb-2">
-                        {selectionContent.text}
+        <div className="flex">
+            {error ? (
+                <div className="w-80 min-h-[3rem] rounded-2xl px-4 py-3 bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800">
+                    <p className="text-red-600 dark:text-red-400 text-sm">
+                        {error.message}
+                    </p>
+                </div>
+            ) : (
+                latestAssistantMessage && (
+                    <div className="w-80 min-h-[3rem] rounded-2xl px-4 py-3 shadow-sm bg-white text-gray-700 border border-gray-200 shadow-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:shadow-gray-800 transition-all duration-200 ease-out">
+                        {latestAssistantMessage.parts.map((part) => {
+                            switch (part.type) {
+                                case 'text':
+                                    return (
+                                        <div key={latestAssistantMessage.id} className="w-full break-words leading-relaxed">
+                                            <Streamdown className="inline">
+                                                {part.text}
+                                            </Streamdown>
+                                        </div>
+                                    )
+                                default:
+                                    return null
+                            }
+                        })}
                     </div>
-                )}
-                {isLoading && (
-                    <div className="flex items-center justify-center py-2">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
-                    </div>
-                )}
-                {error && (
-                    <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
-                        翻译出错: {error.message}
-                    </div>
-                )}
-                {data && (
-                    <div className="text-sm font-medium">
-                        {data}
-                    </div>
-                )}
-            </div>
+                )
+            )}
         </div>
     )
 }
+
 

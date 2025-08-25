@@ -1,6 +1,7 @@
 import { getDefaultStore } from 'jotai'
-import { modelAtom, languageAtom } from '@/config/atoms'
+import { modelAtom, languageAtom, modelStorageAdapter, MODEL_STORAGE_KEY, languageStorageAdapter, LANGUAGE_STORAGE_KEY } from '@/config/atoms'
 import { Config, ModelType, LanguageType } from '@/config/type'
+import { DEFAULT_CONFIG_PROD } from './config.prod'
 
 /**
  * Bridge utilities for accessing configuration values in both React and non-React contexts
@@ -16,7 +17,7 @@ const store = getDefaultStore()
  * For use in services and non-React contexts
  */
 export async function getModelConfig(): Promise<ModelType> {
-    return store.get(modelAtom)
+    return modelStorageAdapter.getItem(MODEL_STORAGE_KEY, DEFAULT_CONFIG_PROD.model)
 }
 
 /**
@@ -24,7 +25,7 @@ export async function getModelConfig(): Promise<ModelType> {
  * For use in services and non-React contexts
  */
 export async function getLanguageConfig(): Promise<LanguageType> {
-    return store.get(languageAtom)
+    return languageStorageAdapter.getItem(LANGUAGE_STORAGE_KEY, DEFAULT_CONFIG_PROD.language)
 }
 
 /**

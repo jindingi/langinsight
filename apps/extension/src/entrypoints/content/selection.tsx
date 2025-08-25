@@ -27,6 +27,7 @@ export function Selection() {
         translationIconPositionAtom,
     )
     const selectionContent = useAtomValue(selectionContentAtom)
+
     const handleMouseUp = useCallback((event: MouseEvent) => {
         if (iconContainerRef.current) {
             const eventPath = event.composedPath()
@@ -115,7 +116,10 @@ export function Selection() {
                         top: `${translationIconPosition?.y}px`,
                     }}
                 >
-                    <TranslationCard />
+                    <TranslationCard 
+                        key={`translation-${selectionContent?.context.slice(0, 50)}`}
+                        initialInput={selectionContent?.context ?? ''} 
+                    />
                 </div>
             )}
         </div>

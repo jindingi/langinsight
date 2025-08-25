@@ -16,6 +16,7 @@ class LLMModelService {
     async getModel() {
         const modelConfig = await getModelConfig()
         const { modelProvider, apiKey, modelName } = modelConfig
+        logger.log('[LLMModelService.getModel] modelConfig:', modelConfig)
         switch (modelProvider) {
             case 'deepseek':
                 return createDeepSeek({
