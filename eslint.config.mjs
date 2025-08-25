@@ -18,6 +18,7 @@ export default tseslint.config(
         'apps/extension/.turbo',
         'apps/extension/.output',
         '**/*.precompiled.ts',
+        'apps/extension/src/components/ai-elements/*.tsx',
     ]),
 )
 
