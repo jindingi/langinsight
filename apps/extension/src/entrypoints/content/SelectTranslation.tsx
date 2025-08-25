@@ -1,30 +1,26 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useRef, useCallback } from 'react'
 import {
-    isTranslationIconVisibleAtom,
     selectionContentAtom,
-    translationIconPositionAtom,
-    isTranslationCardVisibleAtom,
+    translationPositionAtom,
+    translationUIStateAtom,
 } from '@/entrypoints/content/atom'
 import { textSelectionService } from '@/services/text-selection-service'
 import type { TextSelection } from '@/utils/types'
+import { TranslationButton } from '@/components/TranslationButton'
+import { TranslationCard } from '@/components/TranslationCard'
 
 const CONTEXT_OPTIONS = {
     beforeSentences: 2,
     afterSentences: 1,
 }
 
-export function Selection() {
+export function SelectTranslation() {
     const iconContainerRef = useRef<HTMLDivElement>(null)
-    const [isTranslationIconVisible, setIsTranslationIconVisible] = useAtom(
-        isTranslationIconVisibleAtom,
-    )
-    const [isTranslationCardVisible, setIsTranslationCardVisible] = useAtom(
-        isTranslationCardVisibleAtom,
-    )
+    const [translationUIState, setTranslationUIState] = useAtom(translationUIStateAtom)
     const setSelectionContent = useSetAtom(selectionContentAtom)
-    const [translationIconPosition, setTranslationIconPosition] = useAtom(
-        translationIconPositionAtom,
+    const [translationPosition, setTranslationPosition] = useAtom(
+        translationPositionAtom,
     )
     const selectionContent = useAtomValue(selectionContentAtom)
 
@@ -54,17 +50,17 @@ export function Selection() {
             })
         if (selected && selected.text.length > 0 && rect.x && rect.y) {
             setSelectionContent(selected)
-            setIsTranslationIconVisible(true)
+            setTranslationUIState('button')
             const position = {
                 x: rect.right + window.scrollX,
                 y: rect.bottom + window.scrollY + 5,
             }
-            setTranslationIconPosition(position)
+            setTranslationPosition(position)
             // logger.log('[SelectionIcon.handleMouseUp] translationIconPosition:', position)
             // logger.log('[SelectionIcon.handleMouseUp] selected.context:', selected.context)
         } else {
             setSelectionContent(null)
-            setIsTranslationIconVisible(false)
+            setTranslationUIState('hidden')
         }
     }, [])
 
@@ -73,8 +69,7 @@ export function Selection() {
             const eventPath = event.composedPath()
             const insideIcon = eventPath.includes(iconContainerRef.current)
             if (!insideIcon) {
-                setIsTranslationIconVisible(false)
-                setIsTranslationCardVisible(false)
+                setTranslationUIState('hidden')
             }
         }
     }, [])
@@ -90,36 +85,33 @@ export function Selection() {
 
     return (
         <div ref={iconContainerRef}>
-            {isTranslationIconVisible && (
+            {translationUIState === 'card' && (
                 <div
                     className="absolute z-[2147483647] flex"
                     style={{
-                        left: `${translationIconPosition?.x}px`,
-                        top: `${translationIconPosition?.y}px`,
-                    }}
-                >
-                    <div className="bg-background border rounded-lg shadow-lg overflow-hidden">
-                        {selectionContent && selectionContent.context && (
-                            <TranslationButton />
-                        )}
-                        {/* {selectionContent && selectionContent.context && (
-                            <Chat initialInput={selectionContent.context} />
-                        )} */}
-                    </div>
-                </div>
-            )}
-            {isTranslationCardVisible && (
-                <div
-                    className="absolute z-[2147483647] flex"
-                    style={{
-                        left: `${translationIconPosition?.x}px`,
-                        top: `${translationIconPosition?.y}px`,
+                        left: `${translationPosition?.x}px`,
+                        top: `${translationPosition?.y}px`,
                     }}
                 >
                     <TranslationCard 
                         key={`translation-${selectionContent?.context.slice(0, 50)}`}
                         initialInput={selectionContent?.context ?? ''} 
                     />
+                </div>
+            )}
+            {translationUIState === 'button' && (
+                <div
+                    className="absolute z-[2147483647] flex"
+                    style={{
+                        left: `${translationPosition?.x}px`,
+                        top: `${translationPosition?.y}px`,
+                    }}
+                >
+                    <div className="bg-background border rounded-lg shadow-lg overflow-hidden">
+                        {selectionContent && selectionContent.context && (
+                            <TranslationButton />
+                        )}
+                    </div>
                 </div>
             )}
         </div>
