@@ -16,7 +16,7 @@ const CONTEXT_OPTIONS = {
 }
 
 export function SelectTranslation() {
-    const buttonContainerRef = useRef<HTMLDivElement>(null)
+    const containerRef = useRef<HTMLDivElement>(null)
     const [translationUIState, setTranslationUIState] = useAtom(
         translationUIStateAtom,
     )
@@ -27,10 +27,10 @@ export function SelectTranslation() {
     const selectionContent = useAtomValue(selectionContentAtom)
 
     const handleMouseUp = useCallback((event: MouseEvent) => {
-        if (buttonContainerRef.current) {
+        if (containerRef.current) {
             const eventPath = event.composedPath()
-            const insideIcon = eventPath.includes(buttonContainerRef.current)
-            if (insideIcon) {
+            const insidePopover = eventPath.includes(containerRef.current)
+            if (insidePopover) {
                 return
             }
         }
@@ -67,9 +67,9 @@ export function SelectTranslation() {
     }, [])
 
     const handleMouseDown = useCallback((event: MouseEvent) => {
-        if (buttonContainerRef.current) {
+        if (containerRef.current) {
             const eventPath = event.composedPath()
-            const insideIcon = eventPath.includes(buttonContainerRef.current)
+            const insideIcon = eventPath.includes(containerRef.current)
             if (!insideIcon) {
                 setTranslationUIState('hidden')
             }
@@ -86,40 +86,31 @@ export function SelectTranslation() {
     }, [])
 
     return (
-        <>
-            <div ref={buttonContainerRef}>
-                {translationUIState === 'button' && (
-                    <div
-                        key="translation-button"
-                        className="absolute z-[2147483647] flex"
-                        style={{
-                            left: `${translationPosition?.x}px`,
-                            top: `${translationPosition?.y}px`,
-                        }}
-                    >
-                        <div className="bg-background border rounded-lg shadow-lg overflow-hidden">
-                            {selectionContent && selectionContent.context && (
-                                <TranslationButton />
-                            )}
-                        </div>
+        <div
+            ref={containerRef}
+            style={{
+                left: `${translationPosition?.x}px`,
+                top: `${translationPosition?.y}px`,
+            }}
+            className="absolute z-[2147483647] flex"
+        >
+            {translationUIState === 'button' && (
+                <div key="translation-button">
+                    <div className="bg-background border rounded-lg shadow-lg overflow-hidden">
+                        {selectionContent && selectionContent.context && (
+                            <TranslationButton />
+                        )}
                     </div>
-                )}
-            </div>
+                </div>
+            )}
             {translationUIState === 'card' && (
-                <div
-                    key="translation-card"
-                    className="absolute z-[2147483647] flex"
-                    style={{
-                        left: `${translationPosition?.x}px`,
-                        top: `${translationPosition?.y}px`,
-                    }}
-                >
+                <div key="translation-card">
                     <TranslationCard
                         key={`translation-${selectionContent?.context.slice(0, 50)}`}
                         initialInput={selectionContent?.context ?? ''}
                     />
                 </div>
             )}
-        </>
+        </div>
     )
 }
