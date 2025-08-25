@@ -1,22 +1,20 @@
 import { Languages } from 'lucide-react'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 import {
-    selectionContentAtom,
     translationUIStateAtom,
 } from '@/entrypoints/content/atom'
 import { Button } from '@/components/ui/button'
-import { logger } from '@/utils/logger'
 
 export function TranslationButton() {
-    const selectionContent = useAtomValue(selectionContentAtom)
+    // const selectionContent = useAtomValue(selectionContentAtom)
     const setTranslationUIState = useSetAtom(translationUIStateAtom)
 
     const onClick = async () => {
-        logger.log('[TranslationButton.onClick] selectionContent:', selectionContent)
-        const selectedText = selectionContent?.context
-        if (selectedText && selectedText.length > 0) {
+        // logger.log('[TranslationButton.onClick] selectionContent:', selectionContent)
+        // const selectedText = selectionContent?.context
+        // if (selectedText && selectedText.length > 0) {
             setTranslationUIState('card')
-        }
+        // }
     }
 
     return (

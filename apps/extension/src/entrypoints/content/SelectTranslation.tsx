@@ -16,8 +16,10 @@ const CONTEXT_OPTIONS = {
 }
 
 export function SelectTranslation() {
-    const iconContainerRef = useRef<HTMLDivElement>(null)
-    const [translationUIState, setTranslationUIState] = useAtom(translationUIStateAtom)
+    const buttonContainerRef = useRef<HTMLDivElement>(null)
+    const [translationUIState, setTranslationUIState] = useAtom(
+        translationUIStateAtom,
+    )
     const setSelectionContent = useSetAtom(selectionContentAtom)
     const [translationPosition, setTranslationPosition] = useAtom(
         translationPositionAtom,
@@ -25,9 +27,9 @@ export function SelectTranslation() {
     const selectionContent = useAtomValue(selectionContentAtom)
 
     const handleMouseUp = useCallback((event: MouseEvent) => {
-        if (iconContainerRef.current) {
+        if (buttonContainerRef.current) {
             const eventPath = event.composedPath()
-            const insideIcon = eventPath.includes(iconContainerRef.current)
+            const insideIcon = eventPath.includes(buttonContainerRef.current)
             if (insideIcon) {
                 return
             }
@@ -65,9 +67,9 @@ export function SelectTranslation() {
     }, [])
 
     const handleMouseDown = useCallback((event: MouseEvent) => {
-        if (iconContainerRef.current) {
+        if (buttonContainerRef.current) {
             const eventPath = event.composedPath()
-            const insideIcon = eventPath.includes(iconContainerRef.current)
+            const insideIcon = eventPath.includes(buttonContainerRef.current)
             if (!insideIcon) {
                 setTranslationUIState('hidden')
             }
@@ -84,36 +86,40 @@ export function SelectTranslation() {
     }, [])
 
     return (
-        <div ref={iconContainerRef}>
+        <>
+            <div ref={buttonContainerRef}>
+                {translationUIState === 'button' && (
+                    <div
+                        key="translation-button"
+                        className="absolute z-[2147483647] flex"
+                        style={{
+                            left: `${translationPosition?.x}px`,
+                            top: `${translationPosition?.y}px`,
+                        }}
+                    >
+                        <div className="bg-background border rounded-lg shadow-lg overflow-hidden">
+                            {selectionContent && selectionContent.context && (
+                                <TranslationButton />
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
             {translationUIState === 'card' && (
                 <div
+                    key="translation-card"
                     className="absolute z-[2147483647] flex"
                     style={{
                         left: `${translationPosition?.x}px`,
                         top: `${translationPosition?.y}px`,
                     }}
                 >
-                    <TranslationCard 
+                    <TranslationCard
                         key={`translation-${selectionContent?.context.slice(0, 50)}`}
-                        initialInput={selectionContent?.context ?? ''} 
+                        initialInput={selectionContent?.context ?? ''}
                     />
                 </div>
             )}
-            {translationUIState === 'button' && (
-                <div
-                    className="absolute z-[2147483647] flex"
-                    style={{
-                        left: `${translationPosition?.x}px`,
-                        top: `${translationPosition?.y}px`,
-                    }}
-                >
-                    <div className="bg-background border rounded-lg shadow-lg overflow-hidden">
-                        {selectionContent && selectionContent.context && (
-                            <TranslationButton />
-                        )}
-                    </div>
-                </div>
-            )}
-        </div>
+        </>
     )
 }

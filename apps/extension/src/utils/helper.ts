@@ -1,3 +1,6 @@
+import { atom } from 'jotai'
+import { logger } from '@/utils/logger'
+
 /**
  * 从一个字符串中提取被 ```md` 或 ```markdown` 包裹的内容。
  * 这个函数假设整个字符串都是一个代码块。
@@ -35,4 +38,34 @@ export function extractMarkdownContent(content: string): string {
 
     // 如果没有匹配，说明AI的输出是正常的，直接返回原始内容
     return content
+}
+
+// 创建一个带日志功能的 atom 包装器
+export function atomWithLog<T>(initialValue: T, name?: string) {
+    const baseAtom = atom(initialValue)
+
+    const derivedAtom = atom(
+        get => get(baseAtom),
+        (get, set, update: T | ((prev: T) => T)) => {
+            const prevValue = get(baseAtom)
+            let newValue: T
+
+            if (typeof update === 'function') {
+                newValue = (update as (prev: T) => T)(prevValue)
+            } else {
+                newValue = update
+            }
+
+            if (prevValue !== newValue) {
+                logger.log(`Atom ${name || ''} updated:`, {
+                    previous: prevValue,
+                    next: newValue,
+                    timestamp: new Date().toISOString(),
+                })
+            }
+            set(baseAtom, newValue)
+        },
+    )
+
+    return derivedAtom
 }
