@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useChat } from '@ai-sdk/react'
-import { DefaultChatTransport } from 'ai'
+import { useCompletion } from '@ai-sdk/react'
 import { llmService } from '@/services/llm-service'
 import { logger } from '@/utils/logger'
 import { Streamdown } from 'streamdown'
@@ -12,10 +11,10 @@ interface TranslationCardProps {
 
 export function TranslationCard({ initialInput }: TranslationCardProps) {
     const hasSentRef = useRef(false)
-    const { error, messages, sendMessage, status } = useChat({
-        transport: new DefaultChatTransport({
-            fetch: llmService.getFetchFunction(),
-        }),
+
+    const { completion, handleSubmit, error } = useCompletion({
+        fetch: llmService.getCompletionFetchFunction(),
+        initialInput: initialInput,
     })
 
     // Trigger translation only once per unique input (防止React dev模式双重渲染导致重复调用)
@@ -26,16 +25,9 @@ export function TranslationCard({ initialInput }: TranslationCardProps) {
                 initialInput,
             )
             hasSentRef.current = true
-            sendMessage({
-                text: initialInput,
-            })
+            handleSubmit()
         }
-    }, [initialInput, sendMessage])
-
-    // Get the latest assistant message for translation display
-    const latestAssistantMessage = messages
-        .filter(message => message.role === 'assistant')
-        .at(-1)
+    }, [initialInput, handleSubmit])
 
     const baseCardClasses = 'w-80 min-h-[3rem] rounded-2xl px-4 py-3'
     const normalCardClasses = `${baseCardClasses} shadow-sm bg-white text-gray-700 border border-gray-200 shadow-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:shadow-gray-800`
@@ -50,32 +42,16 @@ export function TranslationCard({ initialInput }: TranslationCardProps) {
                         {error.message}
                     </p>
                 </div>
-            ) : status === 'submitted' ? (
+            ) : completion.length === 0 ? (
                 <div
                     className={`${normalCardClasses} flex items-center justify-center`}
                 >
                     <Loader />
                 </div>
             ) : (
-                latestAssistantMessage && (
+                completion.length > 0 && (
                     <div className={normalCardClasses}>
-                        {latestAssistantMessage.parts.map(part => {
-                            switch (part.type) {
-                                case 'text':
-                                    return (
-                                        <div
-                                            key={latestAssistantMessage.id}
-                                            className="w-full break-words leading-relaxed"
-                                        >
-                                            <Streamdown className="inline">
-                                                {part.text}
-                                            </Streamdown>
-                                        </div>
-                                    )
-                                default:
-                                    return null
-                            }
-                        })}
+                        <Streamdown className="inline">{completion}</Streamdown>
                     </div>
                 )
             )}

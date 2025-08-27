@@ -48,6 +48,33 @@ class LLMService {
             }
         }
     }
+    
+    getCompletionFetchFunction() {
+        return async (_input: RequestInfo | URL, init?: RequestInit) => {
+            const m = JSON.parse(init?.body as string)
+            logger.log('[ChatApp.customFetch] messages:', m.messages)
+            const modelMessages: ModelMessage[] = [
+               {
+                role: 'user',
+                content: m.prompt,
+               } 
+            ]
+
+            try {
+                const result = await this.streamText(
+                    modelMessages,
+                    init?.signal || null,
+                )
+                return result.toUIMessageStreamResponse()
+            } catch (error) {
+                logger.error('[ChatApp.customFetch] error:', error)
+                return new Response('Error calling LLM', {
+                    status: 500,
+                    statusText: 'Internal Server Error',
+                })
+            }
+        }
+    }
 
     async translateText(
         text: string,
