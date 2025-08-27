@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Attach to Chrome",
-            "port": 62374, //update with the value given by 'pnpm: get-chrome-debugging-port' task
+            "port": 61867, //update with the value given by 'pnpm: get-chrome-debugging-port' task
             "request": "attach",
             "type": "chrome",
             "webRoot": "${workspaceFolder}/apps/extension/src",

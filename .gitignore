@@ -25,6 +25,7 @@ web-ext.config.ts
 *.sln
 *.sw?
 *.dev.ts
+.vscode/launch.json
 
 # precompiled templates
 *.precompiled.js
