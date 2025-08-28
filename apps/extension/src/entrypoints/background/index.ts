@@ -1,7 +1,8 @@
 import { logger } from '@/utils/logger'
 import { onMessage } from '@/utils/message'
-import { MESSAGE_TYPE_TRANSLATE_TEXT } from '@/consts/message'
-import { TextSelection, TranslateType, Resp } from '@/utils/types'
+import { MESSAGE_TYPE_GET_CONTEXT, MESSAGE_TYPE_TRANSLATE_TEXT } from '@/consts/message'
+import { TextSelection } from '@/utils/types'
+import { TranslateType, Resp } from '@/utils/protocol'
 import { llmService } from '@/services/llm-service'
 
 const translationActionMap: Record<
@@ -55,8 +56,9 @@ export default defineBackground(() => {
 
     onMessage(MESSAGE_TYPE_TRANSLATE_TEXT, async message => {
         const { type: translateType, selection: selectedText } = message.data
-        logger.log('[background.onMessage] type:', typeof selectedText)
-        logger.log('[background.onMessage] text:', selectedText)
+        logger.info(`[background.onMessage] [${MESSAGE_TYPE_TRANSLATE_TEXT}] start`)
+        logger.info(`[background.onMessage] type: ${translateType}`)
+        logger.info(`[background.onMessage] text: ${selectedText}`)
 
         const translateFunction = translationActionMap[translateType]
         if (translateFunction) {
@@ -69,4 +71,27 @@ export default defineBackground(() => {
             data: '',
         }
     })
+
+    onMessage(MESSAGE_TYPE_GET_CONTEXT, async () => {
+        logger.info(`[background.onMessage] [${MESSAGE_TYPE_GET_CONTEXT}] start`)
+        const url = await getCurrentTabUrl()
+        const context: ContextData = {
+            url,
+        }
+        logger.info(`[background.onMessage] [${MESSAGE_TYPE_GET_CONTEXT}] context: ${JSON.stringify(context)}`)
+        return {
+            code: 0,
+            data: context,
+        }
+    })
 })
+
+
+
+async function getCurrentTabUrl() {
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+
+  // tabs[0] will only be undefined if the permission to access tabs information is not granted
+  // or the tab is a protected tab.
+  return tabs[0]?.url ?? '';
+}

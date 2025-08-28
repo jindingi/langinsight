@@ -1,14 +1,16 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useRef, useCallback } from 'react'
 import {
-    selectionContentAtom,
+    selectionContextAtom,
     translationPositionAtom,
     translationUIStateAtom,
 } from '@/entrypoints/content/atom'
 import { textSelectionService } from '@/services/text-selection-service'
-import type { TextSelection } from '@/utils/types'
+import type { TextSelection, SelectionContext } from '@/utils/types'
 import { TranslationButton } from '@/components/TranslationButton'
 import { TranslationCard } from '@/components/TranslationCard'
+import { MESSAGE_TYPE_GET_CONTEXT } from '@/consts/message'
+import { sendMessage } from '@/utils/message'
 
 const CONTEXT_OPTIONS = {
     beforeSentences: 2,
@@ -17,16 +19,16 @@ const CONTEXT_OPTIONS = {
 
 export function SelectTranslation() {
     const containerRef = useRef<HTMLDivElement>(null)
-    const [translationUIState, setTranslationUIState] = useAtom(
+    const [translationUIStateValue, setTranslationUIState] = useAtom(
         translationUIStateAtom,
     )
-    const setSelectionContent = useSetAtom(selectionContentAtom)
-    const [translationPosition, setTranslationPosition] = useAtom(
+    const setSelectionContent = useSetAtom(selectionContextAtom)
+    const [translationPositionValue, setTranslationPosition] = useAtom(
         translationPositionAtom,
     )
-    const selectionContent = useAtomValue(selectionContentAtom)
+    const selectionContextValue = useAtomValue(selectionContextAtom)
 
-    const handleMouseUp = useCallback((event: MouseEvent) => {
+    const handleMouseUp = useCallback(async (event: MouseEvent) => {
         if (containerRef.current) {
             const eventPath = event.composedPath()
             const insidePopover = eventPath.includes(containerRef.current)
@@ -50,8 +52,14 @@ export function SelectTranslation() {
                 beforeSentences: CONTEXT_OPTIONS.beforeSentences,
                 afterSentences: CONTEXT_OPTIONS.afterSentences,
             })
+
         if (selected && selected.text.length > 0 && rect.x && rect.y) {
-            setSelectionContent(selected)
+            const backgroundContext = await sendMessage(MESSAGE_TYPE_GET_CONTEXT)
+            const context: SelectionContext = {
+                url: backgroundContext.data?.url ?? '',
+                textSelection: selected,
+            }
+            setSelectionContent(context)
             setTranslationUIState('button')
             const position = {
                 x: rect.right + window.scrollX,
@@ -89,25 +97,23 @@ export function SelectTranslation() {
         <div
             ref={containerRef}
             style={{
-                left: `${translationPosition?.x}px`,
-                top: `${translationPosition?.y}px`,
+                left: `${translationPositionValue?.x}px`,
+                top: `${translationPositionValue?.y}px`,
             }}
             className="absolute z-[2147483647] flex"
         >
-            {translationUIState === 'button' && (
+            {translationUIStateValue === 'button' && selectionContextValue?.textSelection.context && (
                 <div key="translation-button">
                     <div className="bg-background border rounded-lg shadow-lg overflow-hidden">
-                        {selectionContent && selectionContent.context && (
-                            <TranslationButton />
-                        )}
+                        <TranslationButton />
                     </div>
                 </div>
             )}
-            {translationUIState === 'card' && (
+            {translationUIStateValue === 'card' && selectionContextValue?.textSelection.context && (
                 <div key="translation-card">
                     <TranslationCard
-                        key={`translation-${selectionContent?.context.slice(0, 50)}`}
-                        initialInput={selectionContent?.context ?? ''}
+                        key={`translation-${selectionContextValue?.textSelection.context.slice(0, 50)}`}
+                        selectionContext={selectionContextValue}
                     />
                 </div>
             )}

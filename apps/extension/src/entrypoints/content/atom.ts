@@ -1,8 +1,8 @@
 import { atom } from 'jotai'
-import type { TextSelection } from '@/utils/types'
+import type { SelectionContext } from '@/utils/types'
 import { atomWithLog } from '@/utils/helper'
 
-export const selectionContentAtom = atom<TextSelection | null>(null)
+export const selectionContextAtom = atom<SelectionContext | null>(null)
 export const translationPositionAtom = atom<{
     x: number
     y: number

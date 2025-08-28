@@ -4,14 +4,16 @@ import { llmService } from '@/services/llm-service'
 import { logger } from '@/utils/logger'
 import { Streamdown } from 'streamdown'
 import { Loader } from '@/components/ai-elements/loader'
+import type { SelectionContext } from '@/utils/types'
 
 interface TranslationCardProps {
-    initialInput: string
+    selectionContext: SelectionContext
 }
 
-export function TranslationCard({ initialInput }: TranslationCardProps) {
+export function TranslationCard({ selectionContext }: TranslationCardProps) {
     const hasSentRef = useRef(false)
 
+    const initialInput = selectionContext.textSelection.context
     const { completion, handleSubmit, error } = useCompletion({
         fetch: llmService.getCompletionFetchFunction(),
         initialInput: initialInput,
@@ -47,6 +49,7 @@ export function TranslationCard({ initialInput }: TranslationCardProps) {
                     className={`${normalCardClasses} flex items-center justify-center`}
                 >
                     <Loader />
+                    <p>{selectionContext.url}</p>
                 </div>
             ) : (
                 completion.length > 0 && (
