@@ -34,6 +34,7 @@ function Popup() {
             console.error('Empty model provider')
             return
         }
+        logger.log("MODLE_PROVIDERS", MODLE_PROVIDERS)
         const isValidProvider = MODLE_PROVIDERS.some(provider => provider === value)
         if (!isValidProvider) {
             console.error('Invalid model provider:', value)

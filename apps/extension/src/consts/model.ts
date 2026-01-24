@@ -1,9 +1,3 @@
-export const MODLE_PROVIDERS = [
-    'openai',
-    'deepseek',
-    'openrouter',
-] as const
-
 type ModelProviderSettings = {
     baseUrlDefault: string
     enableCustomBaseUrl: boolean
@@ -57,3 +51,5 @@ export const MODEL_PROVIDER_SETTINGS: Record<string, ModelProviderSettings> = {
         ],
     },
 }
+
+export const MODLE_PROVIDERS = Object.keys(MODEL_PROVIDER_SETTINGS)
