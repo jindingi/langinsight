@@ -29,9 +29,10 @@
         "vitest": "^3.2.4"
     },
     "dependencies": {
-        "@ai-sdk/deepseek": "^1.0.9",
-        "@ai-sdk/provider-utils": "^3.0.4",
-        "@ai-sdk/react": "^2.0.16",
+        "@ai-sdk/deepseek": "^1.0.33",
+        "@ai-sdk/openai": "^2.0.89",
+        "@ai-sdk/provider-utils": "^3.0.20",
+        "@ai-sdk/react": "^3.0.51",
         "@tanstack/react-query": "^5.85.5",
         "ai": "^5.0.16",
         "wink-eng-lite-web-model": "^1.8.1"

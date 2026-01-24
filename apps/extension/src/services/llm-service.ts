@@ -25,6 +25,7 @@ class LLMService {
         })
         return result
     }
+
     getFetchFunction() {
         return async (_input: RequestInfo | URL, init?: RequestInit) => {
             const m = JSON.parse(init?.body as string)

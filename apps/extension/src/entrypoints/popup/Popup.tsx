@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { MODLE_PROVIDERS, MODEL_PROVIDER_SETTINGS } from '@/consts/model'
 import { SUPPORTED_TARGET_LANGUAGES, Language } from '@/consts/language'
+import { ModelType } from '@/config/type'
 
 function Popup() {
     const [modelConfig, setModelConfig] = useAtom(modelAtom)
@@ -38,12 +39,18 @@ function Popup() {
             console.error('Invalid model provider:', value)
             return
         }
-        
-        setModelConfig({
+
+        const baseUrl = modelConfig.baseUrl || MODEL_PROVIDER_SETTINGS[value]?.baseUrlDefault
+        const modelName = MODEL_PROVIDER_SETTINGS[value]?.models[0].name
+        const modelConfigUpdate: ModelType = {
             ...modelConfig,
             modelProvider: value as typeof MODLE_PROVIDERS[number],
-            modelName: MODEL_PROVIDER_SETTINGS[value]?.models[0]?.id || '',
-        })
+            modelName: modelName,
+            baseUrl: baseUrl,
+        }
+        logger.log('[Popup.handleProviderChange] modelConfigUpdate:', modelConfigUpdate)
+
+        setModelConfig(modelConfigUpdate)
     }
 
     const handleModelChange = (value: string) => {
@@ -57,10 +64,14 @@ function Popup() {
             console.error('Invalid model name:', value)
             return
         }
-        setModelConfig({
+        const baseUrl = modelConfig.baseUrl || MODEL_PROVIDER_SETTINGS[value]?.baseUrlDefault
+        const modelConfigUpdate = {
             ...modelConfig,
             modelName: value,
-        })
+            baseUrl: baseUrl,
+        }
+        logger.log('[Popup.handleModelChange] modelConfigUpdate:', modelConfigUpdate)
+        setModelConfig(modelConfigUpdate)
     }
 
     const handleBaseUrlChange = (value: string) => {
@@ -96,7 +107,7 @@ function Popup() {
             return
         }
         const targetLanguage = value as Language
-        
+
         setLanguageConfig({
             ...languageConfig,
             targetLanguage,

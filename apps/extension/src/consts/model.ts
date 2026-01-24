@@ -1,6 +1,7 @@
 export const MODLE_PROVIDERS = [
     'openai',
     'deepseek',
+    'openrouter',
 ] as const
 
 type ModelProviderSettings = {
@@ -34,6 +35,24 @@ export const MODEL_PROVIDER_SETTINGS: Record<string, ModelProviderSettings> = {
             {
                 id: 'deepseek-reasoner',
                 name: 'DeepSeek Reasoner',
+            },
+        ],
+    },
+    openrouter: {
+        baseUrlDefault: 'https://openrouter.ai/api/v1',
+        enableCustomBaseUrl: false,
+        models: [
+            {
+                id: 'google/gemini-2.5-flash-lite',
+                name: 'Gemini 2.5 Flash Lite',
+            },
+            {
+                id: 'openai/gpt-oss-20b',
+                name: 'GPT-OSS-20B',
+            },
+            {
+                id: 'openai/gpt-oss-120b',
+                name: 'GPT-OSS-120B',
             },
         ],
     },

@@ -3,5 +3,11 @@
     "prettier.semi": false,
     "files.autoSave": "onFocusChange",
     "editor.fontSize": 14,
-    "prettier.tabWidth": 4
+    "prettier.tabWidth": 4,
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    }
 }
