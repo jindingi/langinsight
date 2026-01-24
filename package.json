@@ -34,7 +34,7 @@
         "@ai-sdk/provider-utils": "^3.0.20",
         "@ai-sdk/react": "^3.0.51",
         "@tanstack/react-query": "^5.85.5",
-        "ai": "^5.0.16",
+        "ai": "^5.0.123",
         "wink-eng-lite-web-model": "^1.8.1"
     }
 }

@@ -53,7 +53,7 @@ class LLMService {
     getCompletionFetchFunction() {
         return async (_input: RequestInfo | URL, init?: RequestInit) => {
             const m = JSON.parse(init?.body as string)
-            logger.log('[ChatApp.customFetch] messages:', m.messages)
+            logger.log('[getCompletionFetchFunction] prompt:', m.prompt)
             const modelMessages: ModelMessage[] = [
                {
                 role: 'user',
@@ -68,7 +68,7 @@ class LLMService {
                 )
                 return result.toUIMessageStreamResponse()
             } catch (error) {
-                logger.error('[ChatApp.customFetch] error:', error)
+                logger.error('[getCompletionFetchFunction] error:', error)
                 return new Response('Error calling LLM', {
                     status: 500,
                     statusText: 'Internal Server Error',
