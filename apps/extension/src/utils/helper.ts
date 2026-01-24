@@ -69,3 +69,29 @@ export function atomWithLog<T>(initialValue: T, name?: string) {
 
     return derivedAtom
 }
+
+/**
+ * 判断文本是否为单词或短词组
+ * - 英文单词/词组：由空格或连字符连接的单词，且单词数不超过 4 个
+ * - 中文词语：长度小于等于 4 的纯中文
+ * - 排除以句子结束符结尾的文本
+ * @param text - 选中的文本
+ */
+export function isWordOrPhrase(text: string): boolean {
+    const str = text.trim()
+    if (!str || /[.?!。？！]$/.test(str)) return false
+
+    // 纯中文：长度 <= 4
+    const isChineseOnly = /^[\u4e00-\u9fa5]+$/.test(str)
+    if (isChineseOnly) return str.length <= 4
+
+    // 英文单词/词组：由空格或连字符连接，单词数 <= 4
+    // 匹配：word, word-word, word word, word-word word 等
+    const isEnglishWordOrPhrase = /^[a-zA-Z0-9]+(?:[\s-][a-zA-Z0-9]+)*$/.test(str)
+    if (isEnglishWordOrPhrase) {
+        const wordCount = str.split(/[\s-]+/).length
+        return wordCount <= 4
+    }
+
+    return false
+}

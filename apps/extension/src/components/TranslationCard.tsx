@@ -15,7 +15,7 @@ export function TranslationCard({ selectionContext }: TranslationCardProps) {
 
     const initialInput = selectionContext.textSelection.context
     const { completion, handleSubmit, error } = useCompletion({
-        fetch: llmService.getCompletionFetchFunction(),
+        fetch: llmService.getCompletionFetchFunction(selectionContext),
         initialInput: initialInput,
     })
 

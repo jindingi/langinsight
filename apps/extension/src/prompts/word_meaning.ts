@@ -8,10 +8,9 @@ import {
 import { logger } from '@/utils/logger'
 import { Language, SUPPORTED_TARGET_LANGUAGES } from '@/consts/language'
 
-const wordMeaningPromptTemplates: Record<string, HandlebarsTemplateDelegate> =
-    {}
+const promptTemplates: Record<string, HandlebarsTemplateDelegate> = {}
 
-const prompts = ['word_meaning']
+const prompts = ['word_meaning', 'translation']
 
 for (const language of SUPPORTED_TARGET_LANGUAGES) {
     for (const prompt of prompts) {
@@ -23,21 +22,29 @@ for (const language of SUPPORTED_TARGET_LANGUAGES) {
             throw new Error(`[Prompt] ${prompt} ${language} not found`)
         }
         logger.log(`[Prompt] ${key} loaded`)
-        wordMeaningPromptTemplates[`${prompt}_${language}`] = template
+        promptTemplates[`${prompt}_${language}`] = template
     }
 }
 
-export function getWordMeaningPrompt(targetLanguage: Language) {
-    const key = `word_meaning_${targetLanguage}`
-    if (!wordMeaningPromptTemplates[key]) {
-        logger.error(`[wordMeaningPrompt] ${targetLanguage} not found`)
-        throw new Error(`[wordMeaningPrompt] ${targetLanguage} not found`)
+function getPrompt(promptName: string, targetLanguage: Language): string {
+    const key = `${promptName}_${targetLanguage}`
+    if (!promptTemplates[key]) {
+        logger.error(`[${promptName}Prompt] ${targetLanguage} not found`)
+        throw new Error(`[${promptName}Prompt] ${targetLanguage} not found`)
     }
-    const wordMeaningPromptTemplate = wordMeaningPromptTemplates[key]
-    const prompt = wordMeaningPromptTemplate({
+    const template = promptTemplates[key]
+    const prompt = template({
         SELECTED_TEXT_MARKER,
         SELECTED_TEXT_MARKER_END,
     })
-    logger.log(`[wordMeaningPrompt] ${targetLanguage}: ${prompt}`)
+    logger.log(`[${promptName}Prompt] ${targetLanguage}: ${prompt}`)
     return prompt
+}
+
+export function getWordMeaningPrompt(targetLanguage: Language): string {
+    return getPrompt('word_meaning', targetLanguage)
+}
+
+export function getTranslationPrompt(targetLanguage: Language): string {
+    return getPrompt('translation', targetLanguage)
 }

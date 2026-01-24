@@ -5,17 +5,28 @@ import {
 } from '@/consts/selection'
 import { convertToModelMessages, ModelMessage, streamText } from 'ai'
 import { logger } from '@/utils/logger'
-import { getWordMeaningPrompt } from '@/prompts/word_meaning'
+import { getTranslationPrompt, getWordMeaningPrompt } from '@/prompts/word_meaning'
 import { llmModelService } from '@/services/llm-model-service'
 import { getLanguageConfig } from '@/config/config-bridge'
+import { isWordOrPhrase } from '@/utils/helper'
+import { SelectionContext } from '@/utils/types'
 
 class LLMService {
     async streamText(
         messages: ModelMessage[],
+        selectionContext: SelectionContext | null,
         abortSignal: AbortSignal | null,
     ) {
         const languageConfig = await getLanguageConfig()
-        const systemPrompt = getWordMeaningPrompt(languageConfig.targetLanguage)
+        const useWordMeaning = isWordOrPhrase(selectionContext?.textSelection?.text || "")
+        let systemPrompt;
+        if (useWordMeaning) {
+            systemPrompt = getWordMeaningPrompt(languageConfig.targetLanguage)
+            logger.log("use word meaning prompt: ", selectionContext?.textSelection?.text)
+        } else {
+            systemPrompt = getTranslationPrompt(languageConfig.targetLanguage)
+            logger.log("use translation prompt:", selectionContext?.textSelection?.text)
+        }
         const model = await llmModelService.getModel()
         const result = streamText({
             model: model,
@@ -37,6 +48,7 @@ class LLMService {
             try {
                 const result = await this.streamText(
                     modelMessages,
+                    null,
                     init?.signal || null,
                 )
                 return result.toUIMessageStreamResponse()
@@ -49,21 +61,22 @@ class LLMService {
             }
         }
     }
-    
-    getCompletionFetchFunction() {
+
+    getCompletionFetchFunction(selectionContext: SelectionContext) {
         return async (_input: RequestInfo | URL, init?: RequestInit) => {
             const m = JSON.parse(init?.body as string)
-            logger.log('[getCompletionFetchFunction] prompt:', m.prompt)
+            logger.log('[getCompletionFetchFunction] prompt:', m.prompt, typeof (m.prompt))
             const modelMessages: ModelMessage[] = [
-               {
-                role: 'user',
-                content: m.prompt,
-               } 
+                {
+                    role: 'user',
+                    content: m.prompt,
+                }
             ]
 
             try {
                 const result = await this.streamText(
                     modelMessages,
+                    selectionContext,
                     init?.signal || null,
                 )
                 return result.toUIMessageStreamResponse()
