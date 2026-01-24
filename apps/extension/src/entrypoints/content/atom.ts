@@ -8,5 +8,14 @@ export const translationPositionAtom = atom<{
     y: number
 } | null>(null)
 
+/** Stores the selection anchor rect for position recalculation when UI state changes */
+export interface SelectionAnchorRect {
+    left: number
+    right: number
+    top: number
+    bottom: number
+}
+export const selectionAnchorRectAtom = atom<SelectionAnchorRect | null>(null)
+
 export type TranslationUIState = 'hidden' | 'button' | 'card'
 export const translationUIStateAtom = atomWithLog<TranslationUIState>('hidden', 'translationUIStateAtom')

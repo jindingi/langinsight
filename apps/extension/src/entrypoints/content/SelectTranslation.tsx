@@ -4,6 +4,7 @@ import {
     selectionContextAtom,
     translationPositionAtom,
     translationUIStateAtom,
+    selectionAnchorRectAtom,
 } from '@/entrypoints/content/atom'
 import { textSelectionService } from '@/services/text-selection-service'
 import type { TextSelection, SelectionContext } from '@/utils/types'
@@ -11,6 +12,10 @@ import { TranslationButton } from '@/components/TranslationButton'
 import { TranslationCard } from '@/components/TranslationCard'
 import { MESSAGE_TYPE_GET_CONTEXT } from '@/consts/message'
 import { sendMessage } from '@/utils/message'
+import {
+    calculateSafePosition,
+    ELEMENT_DIMENSIONS,
+} from '@/utils/position-utils'
 
 const CONTEXT_OPTIONS = {
     beforeSentences: 2,
@@ -27,6 +32,7 @@ export function SelectTranslation() {
         translationPositionAtom,
     )
     const selectionContextValue = useAtomValue(selectionContextAtom)
+    const [anchorRect, setAnchorRect] = useAtom(selectionAnchorRectAtom)
 
     const handleMouseUp = useCallback(async (event: MouseEvent) => {
         if (containerRef.current) {
@@ -61,16 +67,27 @@ export function SelectTranslation() {
             }
             setSelectionContent(context)
             setTranslationUIState('button')
-            const position = {
-                x: rect.right + window.scrollX,
-                y: rect.bottom + window.scrollY + 5,
+            
+            // Store anchor rect for position recalculation when UI state changes
+            const storedRect = {
+                left: rect.left,
+                right: rect.right,
+                top: rect.top,
+                bottom: rect.bottom,
             }
+            setAnchorRect(storedRect)
+            
+            // Use smart positioning with viewport boundary detection
+            const position = calculateSafePosition(storedRect, {
+                elementWidth: ELEMENT_DIMENSIONS.TRANSLATION_BUTTON_WIDTH,
+                elementHeight: ELEMENT_DIMENSIONS.TRANSLATION_BUTTON_HEIGHT,
+                offset: 5,
+            })
             setTranslationPosition(position)
-            // logger.log('[SelectionIcon.handleMouseUp] translationIconPosition:', position)
-            // logger.log('[SelectionIcon.handleMouseUp] selected.context:', selected.context)
         } else {
             setSelectionContent(null)
             setTranslationUIState('hidden')
+            setAnchorRect(null)
         }
     }, [])
 
@@ -92,6 +109,18 @@ export function SelectTranslation() {
             document.removeEventListener('mousedown', handleMouseDown)
         }
     }, [])
+
+    // Recalculate position when UI state changes to card (larger element)
+    useEffect(() => {
+        if (translationUIStateValue === 'card' && anchorRect) {
+            const position = calculateSafePosition(anchorRect, {
+                elementWidth: ELEMENT_DIMENSIONS.TRANSLATION_CARD_WIDTH,
+                elementHeight: 150, // Estimated card height
+                offset: 5,
+            })
+            setTranslationPosition(position)
+        }
+    }, [translationUIStateValue, anchorRect, setTranslationPosition])
 
     return (
         <div
