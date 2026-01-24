@@ -25,11 +25,17 @@ class LLMModelService {
                     apiKey: apiKey,
                 })(modelName)
             case 'openai':
-            case 'openrouter':
+                // Use Responses API for official OpenAI
                 return createOpenAI({
                     baseURL: baseUrl,
                     apiKey: apiKey,
                 })(modelName)
+            case 'openrouter':
+                // Use Chat Completions API for OpenRouter (Responses API streaming not fully supported)
+                return createOpenAI({
+                    baseURL: baseUrl,
+                    apiKey: apiKey,
+                }).chat(modelName)
             default:
                 throw new Error(
                     `Unsupported model provider: ${modelProvider}`,
