@@ -1,0 +1,2 @@
+- structured output -> stream json fix -> output section by section
+- 固定搭配
